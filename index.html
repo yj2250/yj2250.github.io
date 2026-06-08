@@ -1,11 +1,34 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset = "utf-8">
-    <title>my web</title>
-    <link rel="icon" href="icon.png">
-  </head>
-  <body>
-      hello world
-  </body>
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>無意義的點擊器</title>
+    <style>
+        body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #ffeaa7; font-family: sans-serif; margin: 0; }
+        #btn { font-size: 100px; cursor: pointer; transition: transform 0.1s; user-select: none; }
+        #btn:active { transform: scale(0.9); }
+        h1 { color: #2d3436; font-size: 2rem; margin-top: 20px; }
+    </style>
+</head>
+<body>
+
+    <div id="btn">🐾</div>
+    <h1 id="counter">你已經浪費了 0 秒人生</h1>
+
+    <script>
+        let count = 0;
+        const btn = document.getElementById('btn');
+        const counter = document.getElementById('counter');
+
+        btn.addEventListener('click', () => {
+            count++;
+            counter.innerText = `你已經點了這個肉墊 ${count} 次`;
+            
+            // 這裡可以加入發聲特效（可選）
+            const audio = new Audio('https://www.soundjay.com/human/sounds/shatter-1.mp3'); // 範例聲音
+            // audio.play();
+        });
+    </script>
+</body>
 </html>
