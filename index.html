@@ -3,148 +3,209 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>今天中午吃什麼？世紀難題大考驗</title>
+    <title>水果記憶翻牌遊戲 🍓</title>
     <style>
-        :root {
-            --primary-color: #ff6b6b;
-            --secondary-color: #4ecdc4;
-        }
+        /* === 1. 全局與背景樣式 === */
         body {
-            font-family: 'Helvetica Neue', Arial, sans-serif;
-            margin: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             min-height: 100vh;
-            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
 
-            /* ⏬ 這裡就是設定背景圖片的地方 ⏬ */
-            background-image: url('https://picsum.photos/1920/1080?food'); /* 這裡放你的圖片網址 */
-            background-size: cover;          /* 讓圖片完美填滿整個螢幕 */
-            background-position: center;     /* 圖片置中 */
-            background-repeat: no-repeat;    /* 不重複拼貼 */
-            background-attachment: fixed;    /* 背景固定，不隨網頁滾動 */
-        }
-        .container {
-            /* 調整為半透明的白色，做出質感的毛玻璃效果 */
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(10px); /* 讓背景圖片穿透時帶有模糊感 */
-            -webkit-backdrop-filter: blur(10px);
-            
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
-            max-width: 400px;
-            width: 90%;
-        }
         h1 {
-            color: #2c3e50;
-            margin-bottom: 5px;
+            color: #333;
+            margin-bottom: 10px;
         }
-        .subtitle {
-            color: #57606f;
-            font-size: 0.9rem;
-            margin-bottom: 30px;
-            font-weight: bold;
+
+        /* === 2. 遊戲畫布（卡牌網格） === */
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 80px); /* 4行 */
+            grid-gap: 15px;
+            margin-top: 20px;
         }
-        #result-display {
-            font-size: 2.5rem;
-            font-weight: bold;
-            color: var(--primary-color);
-            height: 80px;
+
+        /* === 3. 卡牌基礎與3D效果設定 === */
+        .card {
+            width: 80px;
+            height: 100px;
+            perspective: 1000px; /* 啟動 3D 空間透視 */
+            cursor: pointer;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d; /* 保持子元素在 3D 空間 */
+        }
+
+        /* 當卡牌被加上 .flipped 類別時，旋轉 180 度 */
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        /* 卡牌的正反面共同樣式 */
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden; /* 背對觀眾時隱藏 */
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 30px;
-            border-bottom: 2px dashed #ccc;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
-        .action-btn {
-            background-color: var(--primary-color);
+
+        /* 卡牌背面（蓋著時） */
+        .card-back {
+            background-color: #2e3d52;
             color: white;
-            border: none;
-            padding: 15px 40px;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 50px;
-            cursor: pointer;
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
-            transition: all 0.2s ease;
-            width: 100%;
+            font-size: 24px;
         }
-        .action-btn:active {
-            transform: scale(0.95);
-            box-shadow: 0 2px 5px rgba(255, 107, 107, 0.4);
+
+        /* 卡牌正面（翻開時） */
+        .card-front {
+            background-color: #fff;
+            font-size: 36px;
+            transform: rotateY(180deg); /* 預先轉過去，翻過來時才會正 */
         }
-        .slot-machine {
-            animation: bounce 0.1s infinite alternate;
-        }
-        @keyframes bounce {
-            from { transform: translateY(0); }
-            to { transform: translateY(-5px); }
+
+        /* 成功配對時的淡出或特殊樣式（可自由變化） */
+        .card.matched {
+            cursor: default;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <h1>🤔 中午吃什麼？</h1>
-        <div class="subtitle">別想了，讓命運替你決定吧！</div>
-        
-        <div id="result-display">？？？</div>
-        
-        <button class="action-btn" id="spin-btn">替我決定！</button>
-    </div>
+    <h1>🍓 水果記憶翻牌 🍌</h1>
+    <p>試著找出所有配對的水果吧！</p>
+    
+    <!-- 遊戲圖板，卡牌會由 JavaScript 動態生成注入到這裡 -->
+    <div class="game-board" id="board"></div>
 
-    <script>
-        const lunchOptions = [
-            "八方雲集",
-            "飯糰",
-            "麥當勞 / 肯德基",
-            "小籠包",
-            "波奇碗",
-            "義大麵 / 燉飯",
-            "粥",
-            "涼麵",
-            "鍋燒意麵",
-            "丼飯",
-            "拉麵",
-            "麵線羹",
-            "乾脆不吃，省錢減肥！"
-        ];
+<script>
+    // === 4. JavaScript 遊戲邏輯 ===
 
-        const resultDisplay = document.getElementById('result-display');
-        const spinBtn = document.getElementById('spin-btn');
-        let isSpinning = false;
+    // 準備 8 種水果（一對所以共 16 張牌）
+    const icons = ['🍎', '🍌', '🍇', '🍓', '🍉', '🍍', '🍒', '🥝'];
+    let cardsArray = [...icons, ...icons]; // 複製一份，變成 16 張
 
-        spinBtn.addEventListener('click', () => {
-            if (isSpinning) return; // 防止重複點擊
-            
-            isSpinning = true;
-            spinBtn.innerText = "抽取中...";
-            resultDisplay.classList.add('slot-machine');
-            
-            let counter = 0;
-            // 模擬跑馬燈滾動效果
-            const interval = setInterval(() => {
-                const randomIndex = Math.floor(Math.random() * lunchOptions.length);
-                resultDisplay.innerText = lunchOptions[randomIndex];
-                counter++;
-                
-                // 滾動 15 次後停止
-                if (counter > 15) {
-                    clearInterval(interval);
-                    resultDisplay.classList.remove('slot-machine');
-                    
-                    // 抽出最終答案
-                    const finalIndex = Math.floor(Math.random() * lunchOptions.length);
-                    resultDisplay.innerText = lunchOptions[finalIndex];
-                    
-                    spinBtn.innerText = "再選一次！";
-                    isSpinning = false;
-                }
-            }, 100);
+    let hasFlippedCard = false; // 是否已經翻了第一張牌
+    let lockBoard = false;      // 鎖定畫布（防止動畫期間玩家亂點第三張）
+    let firstCard, secondCard;  // 記錄翻開的第一張與第二張牌
+
+    // 【步驟 A】洗牌演算法 (Fisher-Yates Shuffle)
+    function shuffle(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]]; // 交換位置
+        }
+    }
+
+    // 【步驟 B】初始化遊戲，動態產生 HTML
+    function createBoard() {
+        const board = document.getElementById('board');
+        shuffle(cardsArray); // 先洗牌
+
+        cardsArray.forEach((icon) => {
+            // 建立卡牌的 DOM 結構
+            const card = document.createElement('div');
+            card.classList.add('card');
+            card.dataset.icon = icon; // 儲存水果種類，用來判斷是否相同
+
+            card.innerHTML = `
+                <div class="card-inner">
+                    <div class="card-front">${icon}</div>
+                    <div class="card-back">❓</div>
+                </div>
+            `;
+
+            card.addEventListener('click', flipCard);
+            board.appendChild(card);
         });
-    </script>
+    }
+
+    // 【步驟 C】玩家點擊翻牌的動作
+    function flipCard() {
+        if (lockBoard) return; // 如果畫布鎖定中，不給點
+        if (this === firstCard) return; // 防止重複點擊同一張牌
+
+        this.classList.add('flipped'); // 加上 CSS 翻轉效果
+
+        if (!hasFlippedCard) {
+            // 翻第一張牌
+            hasFlippedCard = true;
+            firstCard = this;
+            return;
+        }
+
+        // 翻第二張牌
+        secondCard = this;
+        checkForMatch();
+    }
+
+    // 【步驟 D】檢查兩張牌是否配對成功
+    function checkForMatch() {
+        let isMatch = firstCard.dataset.icon === secondCard.dataset.icon;
+
+        if (isMatch) {
+            disableCards(); // 配對成功
+        } else {
+            unflipCards();  // 配對失敗，翻回去
+        }
+    }
+
+    // 配對成功：移除點擊事件，並留下翻開狀態
+    function disableCards() {
+        firstCard.removeEventListener('click', flipCard);
+        secondCard.removeEventListener('click', flipCard);
+        firstCard.classList.add('matched');
+        secondCard.classList.add('matched');
+        
+        resetBoard();
+        checkWin();
+    }
+
+    // 配對失敗：等一秒鐘後自動翻回去
+    function unflipCards() {
+        lockBoard = true; // 鎖定期間不能亂點其他牌
+
+        setTimeout(() => {
+            firstCard.classList.remove('flipped');
+            secondCard.classList.remove('flipped');
+            resetBoard(); // 釋放鎖定
+        }, 1000); // 1000 毫秒 = 1 秒
+    }
+
+    // 每次比對完，重設變數狀態
+    function resetBoard() {
+        [hasFlippedCard, lockBoard] = [false, false];
+        [firstCard, secondCard] = [null, null];
+    }
+
+    // 檢查是不是全部都通關了
+    function checkWin() {
+        const allMatched = document.querySelectorAll('.card.matched');
+        if (allMatched.length === cardsArray.length) {
+            setTimeout(() => {
+                alert('🎉 太厲害了！你完成了所有配對！');
+            }, 500);
+        }
+    }
+
+    // 執行初始化
+    createBoard();
+</script>
+
 </body>
 </html>
