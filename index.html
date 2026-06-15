@@ -3,12 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>水果記憶翻牌遊戲 🍓</title>
+    <title>人體器官功能記憶挑戰 🏥</title>
     <style>
-        /* === 1. 全局與背景樣式 === */
+        /* === 1. 護眼深色模式背景 === */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            background-color: #1a1e24; 
+            color: #f0f2f5;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -18,23 +19,30 @@
         }
 
         h1 {
-            color: #333;
-            margin-bottom: 10px;
+            color: #4fd1c5; /* 換成柔和的醫療青綠色 */
+            margin-bottom: 5px;
         }
 
-        /* === 2. 遊戲畫布（卡牌網格） === */
+        .info-panel {
+            margin-bottom: 15px;
+            font-size: 16px;
+            color: #b0b8c4;
+            text-align: center;
+        }
+
+        /* === 2. 遊戲畫布（因文字較多，微調卡牌寬度至 95px，維持 6 欄） === */
         .game-board {
             display: grid;
-            grid-template-columns: repeat(4, 80px); /* 4行 */
-            grid-gap: 15px;
-            margin-top: 20px;
+            grid-template-columns: repeat(6, 95px); 
+            grid-gap: 12px;
+            margin-top: 10px;
         }
 
-        /* === 3. 卡牌基礎與3D效果設定 === */
+        /* === 3. 卡牌基礎與 3D 設定 === */
         .card {
-            width: 80px;
-            height: 100px;
-            perspective: 1000px; /* 啟動 3D 空間透視 */
+            width: 95px;
+            height: 110px;
+            perspective: 1000px;
             cursor: pointer;
         }
 
@@ -43,90 +51,139 @@
             width: 100%;
             height: 100%;
             text-align: center;
-            transition: transform 0.6s;
-            transform-style: preserve-3d; /* 保持子元素在 3D 空間 */
+            transition: transform 0.5s;
+            transform-style: preserve-3d;
         }
 
-        /* 當卡牌被加上 .flipped 類別時，旋轉 180 度 */
         .card.flipped .card-inner {
             transform: rotateY(180deg);
         }
 
-        /* 卡牌的正反面共同樣式 */
         .card-front, .card-back {
             position: absolute;
             width: 100%;
             height: 100%;
-            backface-visibility: hidden; /* 背對觀眾時隱藏 */
+            backface-visibility: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            padding: 5px;
+            box-sizing: border-box;
         }
 
-        /* 卡牌背面（蓋著時） */
+        /* 卡牌背面：深藍灰色配醫學紅十字 */
         .card-back {
-            background-color: #2e3d52;
-            color: white;
-            font-size: 24px;
+            background-color: #2c3e50;
+            color: #e53e3e; 
+            font-size: 28px;
+            font-weight: bold;
         }
 
-        /* 卡牌正面（翻開時） */
+        /* 卡牌正面：舒適的白底，文字會自動換行並縮小字體 */
         .card-front {
-            background-color: #fff;
-            font-size: 36px;
-            transform: rotateY(180deg); /* 預先轉過去，翻過來時才會正 */
+            background-color: #f8f9fa;
+            color: #2d3748;
+            font-size: 13px;
+            font-weight: bold;
+            line-height: 1.3;
+            transform: rotateY(180deg);
         }
 
-        /* 成功配對時的淡出或特殊樣式（可自由變化） */
+        /* 如果是純圖案的器官卡，字體放大 */
+        .card-front.icon-only {
+            font-size: 40px;
+        }
+
         .card.matched {
             cursor: default;
+            opacity: 0.4; 
+            transition: opacity 0.5s;
         }
     </style>
 </head>
 <body>
 
-    <h1>🍓 水果記憶翻牌 🍌</h1>
-    <p>試著找出所有配對的水果吧！</p>
+    <h1>🏥 人體器官功能配對挑戰</h1>
+    <div class="info-panel">
+        <p>找出「器官圖案」與它「最主要的功能」來完成配對！</p>
+    </div>
     
-    <!-- 遊戲圖板，卡牌會由 JavaScript 動態生成注入到這裡 -->
     <div class="game-board" id="board"></div>
 
 <script>
-    // === 4. JavaScript 遊戲邏輯 ===
+    // === 4. 醫學知識庫（12 組配對） ===
+    const dataSet = [
+        { id: 1, type: 'organ', content: '🧠\n大腦' },
+        { id: 1, type: 'function', content: '思考、記憶與控管全身指令' },
+        
+        { id: 2, type: 'organ', content: '🫁\n肺臟' },
+        { id: 2, type: 'function', content: '進行氣體交換吸入氧氣' },
+        
+        { id: 3, type: 'organ', content: '🫀\n心臟' },
+        { id: 3, type: 'function', content: '跳動並泵出血液至全身' },
+        
+        { id: 4, type: 'organ', content: '🥩\n肝臟' }, // 用肉代替，解毒工廠
+        { id: 4, type: 'function', content: '代謝解毒與分泌膽汁' },
+        
+        { id: 5, type: 'organ', content: '🥣\n胃部' },
+        { id: 5, type: 'function', content: '分泌胃酸初步消化食物' },
+        
+        { id: 6, type: 'organ', content: '🪵\n腎臟' }, // 腰子
+        { id: 6, type: 'function', content: '過濾血液並形成尿液' },
+        
+        { id: 7, type: 'organ', content: '👁️\n眼睛' },
+        { id: 7, type: 'function', content: '接收光線並產生視覺' },
+        
+        { id: 8, type: 'organ', content: '👂\n耳朵' },
+        { id: 8, type: 'function', content: '接收聲波與維持身體平衡' },
+        
+        { id: 9, type: 'organ', content: '🦴\n骨骼' },
+        { id: 9, type: 'function', content: '支撐身體並保護內臟' },
+        
+        { id: 10, type: 'organ', content: '💪\n肌肉' },
+        { id: 10, type: 'function', content: '收縮以產生力量與運動' },
+        
+        { id: 11, type: 'organ', content: '🩸\n血液' },
+        { id: 11, type: 'function', content: '運輸氧氣、養分與免疫細胞' },
+        
+        { id: 12, type: 'organ', content: '🛡️\n皮膚' },
+        { id: 12, type: 'function', content: '保護身體免受外物入侵' }
+    ];
 
-    // 準備 8 種水果（一對所以共 16 張牌）
-    const icons = ['🍎', '🍌', '🍇', '🍓', '🍉', '🍍', '🍒', '🥝'];
-    let cardsArray = [...icons, ...icons]; // 複製一份，變成 16 張
+    // 複製資料陣列準備洗牌
+    let cardsArray = [...dataSet]; 
 
-    let hasFlippedCard = false; // 是否已經翻了第一張牌
-    let lockBoard = false;      // 鎖定畫布（防止動畫期間玩家亂點第三張）
-    let firstCard, secondCard;  // 記錄翻開的第一張與第二張牌
+    let hasFlippedCard = false;
+    let lockBoard = false;
+    let firstCard, secondCard;
 
-    // 【步驟 A】洗牌演算法 (Fisher-Yates Shuffle)
+    // 洗牌演算法
     function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]]; // 交換位置
+            [array[i], array[j]] = [array[j], array[i]];
         }
     }
 
-    // 【步驟 B】初始化遊戲，動態產生 HTML
+    // 初始化遊戲板
     function createBoard() {
         const board = document.getElementById('board');
-        shuffle(cardsArray); // 先洗牌
+        shuffle(cardsArray);
 
-        cardsArray.forEach((icon) => {
-            // 建立卡牌的 DOM 結構
+        cardsArray.forEach((item) => {
             const card = document.createElement('div');
             card.classList.add('card');
-            card.dataset.icon = icon; // 儲存水果種類，用來判斷是否相同
+            card.dataset.matchId = item.id; // 改用專屬的 id 作為配對依據
+
+            // 判斷是不是器官卡（有圖案的），是的話字體放大
+            const extraClass = item.type === 'organ' ? 'icon-only' : '';
 
             card.innerHTML = `
                 <div class="card-inner">
-                    <div class="card-front">${icon}</div>
-                    <div class="card-back">❓</div>
+                    <div class="card-front ${extraClass}">${item.content.replace('\n', '<br>')}</div>
+                    <div class="card-back">🏥</div>
                 </div>
             `;
 
@@ -135,37 +192,32 @@
         });
     }
 
-    // 【步驟 C】玩家點擊翻牌的動作
     function flipCard() {
-        if (lockBoard) return; // 如果畫布鎖定中，不給點
-        if (this === firstCard) return; // 防止重複點擊同一張牌
+        if (lockBoard) return;
+        if (this === firstCard) return;
 
-        this.classList.add('flipped'); // 加上 CSS 翻轉效果
+        this.classList.add('flipped');
 
         if (!hasFlippedCard) {
-            // 翻第一張牌
             hasFlippedCard = true;
             firstCard = this;
             return;
         }
 
-        // 翻第二張牌
         secondCard = this;
         checkForMatch();
     }
 
-    // 【步驟 D】檢查兩張牌是否配對成功
     function checkForMatch() {
-        let isMatch = firstCard.dataset.icon === secondCard.dataset.icon;
-
+        // 改成對比 dataset.matchId 是否相同
+        let isMatch = firstCard.dataset.matchId === secondCard.dataset.matchId;
         if (isMatch) {
-            disableCards(); // 配對成功
+            disableCards();
         } else {
-            unflipCards();  // 配對失敗，翻回去
+            unflipCards();
         }
     }
 
-    // 配對成功：移除點擊事件，並留下翻開狀態
     function disableCards() {
         firstCard.removeEventListener('click', flipCard);
         secondCard.removeEventListener('click', flipCard);
@@ -176,34 +228,29 @@
         checkWin();
     }
 
-    // 配對失敗：等一秒鐘後自動翻回去
     function unflipCards() {
-        lockBoard = true; // 鎖定期間不能亂點其他牌
-
+        lockBoard = true;
         setTimeout(() => {
             firstCard.classList.remove('flipped');
             secondCard.classList.remove('flipped');
-            resetBoard(); // 釋放鎖定
-        }, 1000); // 1000 毫秒 = 1 秒
+            resetBoard();
+        }, 1200); // 文字較多，配對失敗時停留 1.2 秒讓玩家閱讀
     }
 
-    // 每次比對完，重設變數狀態
     function resetBoard() {
         [hasFlippedCard, lockBoard] = [false, false];
         [firstCard, secondCard] = [null, null];
     }
 
-    // 檢查是不是全部都通關了
     function checkWin() {
         const allMatched = document.querySelectorAll('.card.matched');
         if (allMatched.length === cardsArray.length) {
             setTimeout(() => {
-                alert('🎉 太厲害了！你完成了所有配對！');
+                alert('🎉 恭喜通關！你對人體器官的功能瞭若指掌，簡直是醫學小天才！');
             }, 500);
         }
     }
 
-    // 執行初始化
     createBoard();
 </script>
 
