@@ -3,29 +3,137 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>無意義的點擊器</title>
+    <title>今天中午吃什麼？世紀難題大考驗</title>
     <style>
-        body { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; background-color: #ffeaa7; font-family: sans-serif; margin: 0; }
-        #btn { font-size: 100px; cursor: pointer; transition: transform 0.1s; user-select: none; }
-        #btn:active { transform: scale(0.9); }
-        h1 { color: #2d3436; font-size: 2rem; margin-top: 20px; }
+        :root {
+            --primary-color: #ff6b6b;
+            --secondary-color: #4ecdc4;
+        }
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f7f9fa;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+            max-width: 400px;
+            width: 90%;
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-bottom: 30px;
+        }
+        #result-display {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: var(--primary-color);
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            border-bottom: 2px dashed #eee;
+        }
+        .action-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: bold;
+            border-radius: 50px;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+            transition: all 0.2s ease;
+            width: 100%;
+        }
+        .action-btn:active {
+            transform: scale(0.95);
+            box-shadow: 0 2px 5px rgba(255, 107, 107, 0.4);
+        }
+        .slot-machine {
+            animation: bounce 0.1s infinite alternate;
+        }
+        @keyframes bounce {
+            from { transform: translateY(0); }
+            to { transform: translateY(-5px); }
+        }
     </style>
 </head>
 <body>
 
-    <div id="btn">🐾</div>
-    <h1 id="counter">你已經浪費了 0 秒人生</h1>
+    <div class="container">
+        <h1>🤔 中午吃什麼？</h1>
+        <div class="subtitle">別想了，讓命運替你決定吧！</div>
+        
+        <div id="result-display">？？？</div>
+        
+        <button class="action-btn" id="spin-btn">替我決定！</button>
+    </div>
 
     <script>
-        let count = 0;
-        const btn = document.getElementById('btn');
-        const counter = document.getElementById('counter');
+        const lunchOptions = [
+            "便當店 (排骨飯/雞腿飯)",
+            "便利商店 (大乾麵/御飯糰)",
+            "麥當勞 / 肯德基",
+            "牛肉麵",
+            "健康餐盒 (水煮系列)",
+            "義大麵 / 燉飯",
+            "迴轉壽司",
+            "鍋貼 / 水餃",
+            "火鍋 / 麻辣燙",
+            "滷肉飯 + 貢丸湯",
+            "拉麵",
+            "燒肉飯",
+            "乾脆不吃，省錢減肥！"
+        ];
 
-        btn.addEventListener('click', () => {
-            count++;
-            counter.innerText = `你已經點了這個肉墊 ${count} 次`;
+        const resultDisplay = document.getElementById('result-display');
+        const spinBtn = document.getElementById('spin-btn');
+        let isSpinning = false;
+
+        spinBtn.addEventListener('click', () => {
+            if (isSpinning) return; // 防止重複點擊
             
-            const audio = new Audio('https://www.soundjay.com/human/sounds/shatter-1.mp3'));
+            isSpinning = true;
+            spinBtn.innerText = "抽取中...";
+            resultDisplay.classList.add('slot-machine');
+            
+            let counter = 0;
+            // 模擬跑馬燈滾動效果
+            const interval = setInterval(() => {
+                const randomIndex = Math.floor(Math.random() * lunchOptions.length);
+                resultDisplay.innerText = lunchOptions[randomIndex];
+                counter++;
+                
+                // 滾動 15 次後停止
+                if (counter > 15) {
+                    clearInterval(interval);
+                    resultDisplay.classList.remove('slot-machine');
+                    
+                    // 抽出最終答案
+                    const finalIndex = Math.floor(Math.random() * lunchOptions.length);
+                    resultDisplay.innerText = lunchOptions[finalIndex];
+                    
+                    spinBtn.innerText = "再選一次！";
+                    isSpinning = false;
+                }
+            }, 100);
+        });
     </script>
 </body>
 </html>
