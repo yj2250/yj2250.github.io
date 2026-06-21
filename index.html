@@ -210,46 +210,47 @@
 
 <script>
     // === 5. 醫學知識庫 ===
-    const dataSet = [
-        { id: 1, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-brain"></i><br><span>大腦</span>' },
+  const dataSet = [
+        { id: 1, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">🧠</span><br><span>大腦</span>' },
         { id: 1, type: 'function', content: '思考、記憶與控管全身指令' },
         
-        { id: 2, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-lungs"></i><br><span>肺臟</span>' },
+        { id: 2, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">🫁</span><br><span>肺臟</span>' },
         { id: 2, type: 'function', content: '進行氣體交換吸入氧氣' },
         
-        { id: 3, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-heart-pulse"></i><br><span>心臟</span>' },
+        { id: 3, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">🫀</span><br><span>心臟</span>' },
         { id: 3, type: 'function', content: '跳動並泵出血液至全身' },
         
-        { id: 4, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-capsules"></i><br><span>肝臟</span>' }, 
+        { id: 4, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">💊</span><br><span>肝臟</span>' }, // 膠囊代謝意象
         { id: 4, type: 'function', content: '代謝解毒與分泌膽汁' },
         
-        // 🛠️ 胃部已更換為專業胃袋圖示 (fa-stomach)
-        { id: 5, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-stomach"></i><br><span>胃部</span>' }, 
+        // 🛠️ 胃部更換為最像胃袋形狀的 Emoji
+        { id: 5, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">🍠</span><br><span>胃部</span>' }, 
         { id: 5, type: 'function', content: '分泌胃酸初步消化食物' },
         
-        { id: 6, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-filter"></i><br><span>腎臟</span>' }, 
+        // 🛠️ 腎臟更換為標準蠶豆形 Emoji
+        { id: 6, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">🫘</span><br><span>腎臟</span>' }, 
         { id: 6, type: 'function', content: '過濾血液並形成尿液' },
         
-        { id: 7, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-eye"></i><br><span>眼睛</span>' },
+        { id: 7, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">👁️</span><br><span>眼睛</span>' },
         { id: 7, type: 'function', content: '接收光線並產生視覺' },
         
-        { id: 8, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-ear-listen"></i><br><span>耳朵</span>' },
+        { id: 8, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">👂</span><br><span>耳朵</span>' },
         { id: 8, type: 'function', content: '接收聲波與維持身體平衡' },
         
-        { id: 9, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-bone"></i><br><span>骨骼</span>' },
+        { id: 9, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">🦴</span><br><span>骨骼</span>' },
         { id: 9, type: 'function', content: '支撐身體並保護內臟' },
         
-        // 🛠️ 肌肉已更換為相容性更高的強力二頭肌手臂圖示 (fa-bicep)
-        { id: 10, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-bicep"></i><br><span>肌肉</span>' }, 
+        // 🛠️ 肌肉更換為絕對支援的強壯手臂 Emoji
+        { id: 10, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">💪</span><br><span>肌肉</span>' }, 
         { id: 10, type: 'function', content: '收縮以產生力量與運動' },
         
-        { id: 11, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-droplet"></i><br><span>血液</span>' },
+        { id: 11, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">🩸</span><br><span>血液</span>' },
         { id: 11, type: 'function', content: '運輸氧氣、養分與免疫細胞' },
         
-        { id: 12, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-shield-halved"></i><br><span>皮膚</span>' }, 
+        { id: 12, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">🛡️</span><br><span>皮膚</span>' }, 
         { id: 12, type: 'function', content: '保護身體免受外物入侵' }
     ];
-
+    
     let cardsArray = [];
     let hasFlippedCard = false;
     let lockBoard = false;
