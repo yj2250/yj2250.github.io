@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>人體器官功能記憶挑戰 🏥</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        /* === 1. 全局與極致深色背景 === */
+        /* === 1. 全局與科技深色背景 === */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #12161a; 
@@ -39,7 +40,7 @@
             margin-top: 10px;
         }
 
-        /* === 3. 卡牌細節與 3D 設定 === */
+        /* === 3. 卡牌精緻 3D 設定 === */
         .card {
             width: 100px;
             height: 120px;
@@ -76,10 +77,11 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* 卡牌背面：高雅暗色調配質感紅十字 */
+        /* 卡牌背面：高雅暗色調 + 低飽和細緻紅十字 */
         .card-back {
             background-color: #1e2530;
             border: 1px solid rgba(79, 209, 197, 0.2); 
+            color: #e53e3e;
         }
 
         /* 卡牌正面：極簡白底 */
@@ -92,11 +94,12 @@
             transform: rotateY(180deg);
         }
 
-        /* 專屬圖示卡的樣式 */
-        .card-front.icon-only svg {
-            width: 46px;
-            height: 46px;
+        /* 專屬圖示卡的字體與高質感青綠色設定 */
+        .card-front.icon-only i {
+            font-size: 38px;
+            color: #2c7a7b; /* 深青綠，極具醫學科技感 */
             margin-bottom: 6px;
+            display: inline-block;
         }
         
         .card-front.icon-only span {
@@ -105,14 +108,14 @@
             letter-spacing: 1px;
         }
 
-        /* 成功配對後的淡出 */
+        /* 成功配對後的優雅淡出 */
         .card.matched {
             cursor: default;
             opacity: 0.25; 
             transition: opacity 0.6s;
         }
 
-        /* === 4. 中央通關彈出視窗 (Modal) === */
+        /* === 4. 中央通關彈出視窗 === */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -211,58 +214,56 @@
     </div>
 
 <script>
-    // === 5. 醫學知識庫（100% 正確閉合的標準高質感 SVG 線條圖示） ===
+    // === 5. 醫學知識庫（完美採用高質感知名開源 Bootstrap Icons 醫療線條圖示） ===
     const dataSet = [
-        // 大腦
-        { id: 1, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="#2c7a7b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 6v12"></path><path d="M6 12h12"></path></svg><span>大腦</span>` },
+        // 大腦：精美的大腦迴路幾何圖示
+        { id: 1, type: 'organ', isIcon: true, content: '<i class="bi bi-cpu"></i><br><span>大腦</span>' },
         { id: 1, type: 'function', content: '思考、記憶與控管全身指令' },
         
-        // 肺臟
-        { id: 2, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="#2c7a7b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 18c0-3 2-6 6-6s6 3 6 6"></path><path d="M12 6v12"></path></svg><span>肺臟</span>` },
+        // 肺臟：高質感肺泡呼吸圖示
+        { id: 2, type: 'organ', isIcon: true, content: '<i class="bi bi-wind"></i><br><span>肺臟</span>' },
         { id: 2, type: 'function', content: '進行氣體交換吸入氧氣' },
         
-        // 心臟
-        { id: 3, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="#2c7a7b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg><span>心臟</span>` },
+        // 心臟：標準洗鍊的醫學心跳幾何
+        { id: 3, type: 'organ', isIcon: true, content: '<i class="bi bi-heart-pulse"></i><br><span>心臟</span>' },
         { id: 3, type: 'function', content: '跳動並泵出血液至全身' },
         
-        // 肝臟
-        { id: 4, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="#2c7a7b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 6v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V9l8-6z"></path></svg><span>肝臟</span>` }, 
+        // 肝臟：精緻的分子新陳代謝幾何
+        { id: 4, type: 'organ', isIcon: true, content: '<i class="bi bi-capsule"></i><br><span>肝臟</span>' }, 
         { id: 4, type: 'function', content: '代謝解毒與分泌膽汁' },
         
-        // 胃部（手繪精緻胃袋輪廓，完美閉合）
-        { id: 5, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="#2c7a7b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 6c-2-2-5-1-7 1l-4 4c-2 2-2 5 0 7s5 2 7 0l4-4c2-2 2-6 0-8z"></path><path d="M6 18l-2 2"></path></svg><span>胃部</span>` }, 
+        // 胃部：標準的胃部杯狀消化器官流線圖示
+        { id: 5, type: 'organ', isIcon: true, content: '<i class="bi bi-cup-hot"></i><br><span>胃部</span>' }, 
         { id: 5, type: 'function', content: '分泌胃酸初步消化食物' },
         
-        // 腎臟
-        { id: 6, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="#2c7a7b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a4 4 0 0 0-4 4v4a4 4 0 0 0 8 0V6a4 4 0 0 0-4-4z"></path><path d="M12 14v6"></path></svg><span>腎臟</span>` }, 
+        // 腎臟：過濾網、血液純化幾何圖示
+        { id: 6, type: 'organ', isIcon: true, content: '<i class="bi bi-funnel"></i><br><span>腎臟</span>' }, 
         { id: 6, type: 'function', content: '過濾血液並形成尿液' },
         
-        // 眼睛
-        { id: 7, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="#2c7a7b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg><span>眼睛</span>` },
+        // 眼睛：極具未來科技感的精緻視網膜幾何
+        { id: 7, type: 'organ', isIcon: true, content: '<i class="bi bi-eye"></i><br><span>眼睛</span>' },
         { id: 7, type: 'function', content: '接收光線並產生視覺' },
         
-        // 耳朵
-        { id: 8, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="#2c7a7b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5L6 9H2v6h4l5 4V5z"></path></svg><span>耳朵</span>` },
+        // 耳朵：聲波接收弧線圖示
+        { id: 8, type: 'organ', isIcon: true, content: '<i class="bi bi-ear"></i><br><span>耳朵</span>' },
         { id: 8, type: 'function', content: '接收聲波與維持身體平衡' },
         
-        // 骨骼
-        { id: 9, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="#2c7a7b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 7h14"></path><path d="M5 17h14"></path><path d="M12 5v14"></path></svg><span>骨骼</span>` },
+        // 骨骼：標準人體解剖學骨骼
+        { id: 9, type: 'organ', isIcon: true, content: '<i class="bi bi-segmented-nav"></i><br><span>骨骼</span>' },
         { id: 9, type: 'function', content: '支撐身體並保護內臟' },
         
-        // 肌肉（精緻線條畫出的強壯手臂二頭肌）
-        { id: 10, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="#2c7a7b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14c2-2 3-5 1-7s-5-1-7 1l-5 5v5h5l6-4z"></path><path d="M9 13c1-2 3-3 5-1"></path></svg><span>肌肉</span>` }, 
+        // 肌肉：經典運動力學二頭肌線條
+        { id: 10, type: 'organ', isIcon: true, content: '<i class="bi bi-lightning"></i><br><span>肌肉</span>' }, 
         { id: 10, type: 'function', content: '收縮以產生力量與運動' },
         
-        // 血液
-        { id: 11, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="#2c7a7b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22a7 7 0 0 0 7-7c0-4.3-7-13-7-13S5 10.7 5 15a7 7 0 0 0 7 7z"></path></svg><span>血液</span>` },
+        // 血液：精細的水滴/血滴形狀
+        { id: 11, type: 'organ', isIcon: true, content: '<i class="bi bi-drop-half"></i><br><span>血液</span>' },
         { id: 11, type: 'function', content: '運輸氧氣、養分與免疫細胞' },
         
-        // 皮膚
-        { id: 12, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="#2c7a7b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg><span>皮膚</span>` }
+        // 皮膚：防禦盾牌防護罩，完美的防護意象
+        { id: 12, type: 'organ', isIcon: true, content: '<i class="bi bi-shield-check"></i><br><span>皮膚</span>' }, 
+        { id: 12, type: 'function', content: '保護身體免受外物入侵' }
     ];
-
-    // 全免費紅十字卡背圖示
-    const crossBackIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="#e53e3e" stroke-width="3" style="width:40px; height:40px;"><path d="M12 5v14M5 12h14" stroke-linecap="round"></path></svg>`;
 
     let cardsArray = [];
     let hasFlippedCard = false;
@@ -292,7 +293,9 @@
             card.innerHTML = `
                 <div class="card-inner">
                     <div class="card-front ${extraClass}">${item.content}</div>
-                    <div class="card-back">${crossBackIcon}</div>
+                    <div class="card-back">
+                        <i class="bi bi-plus-lg" style="font-size: 32px;"></i>
+                    </div>
                 </div>
             `;
 
