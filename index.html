@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>人體器官功能記憶挑戰 🏥</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* === 1. 護眼深色模式背景 === */
+        /* === 1. 全局與護眼深色背景 === */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #1a1e24; 
@@ -19,7 +20,7 @@
         }
 
         h1 {
-            color: #4fd1c5; /* 換成柔和的醫療青綠色 */
+            color: #4fd1c5; /* 醫療青綠色 */
             margin-bottom: 5px;
         }
 
@@ -30,7 +31,7 @@
             text-align: center;
         }
 
-        /* === 2. 遊戲畫布（因文字較多，微調卡牌寬度至 95px，維持 6 欄） === */
+        /* === 2. 遊戲畫布排版 === */
         .game-board {
             display: grid;
             grid-template-columns: repeat(6, 95px); 
@@ -65,11 +66,12 @@
             height: 100%;
             backface-visibility: hidden;
             display: flex;
+            flex-direction: column;
             align-items: center;
             justify-content: center;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-            padding: 5px;
+            padding: 8px;
             box-sizing: border-box;
         }
 
@@ -81,26 +83,109 @@
             font-weight: bold;
         }
 
-        /* 卡牌正面：舒適的白底，文字會自動換行並縮小字體 */
+        /* 卡牌正面：柔和象牙白 */
         .card-front {
             background-color: #f8f9fa;
             color: #2d3748;
             font-size: 13px;
             font-weight: bold;
-            line-height: 1.3;
+            line-height: 1.4;
             transform: rotateY(180deg);
         }
 
-        /* 如果是純圖案的器官卡，字體放大 */
+        /* 純圖示器官卡的特殊樣式（顏色更豐富好看） */
         .card-front.icon-only {
-            font-size: 40px;
+            font-size: 36px;
+            color: #2b6cb0; /* 質感藍色 */
+        }
+        .card-front.icon-only span {
+            font-size: 14px;
+            color: #4a5568;
+            margin-top: 5px;
         }
 
         .card.matched {
             cursor: default;
-            opacity: 0.4; 
+            opacity: 0.3; 
             transition: opacity 0.5s;
         }
+
+        /* === 4. 中央通關彈出視窗 (Modal) === */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75); /* 背景變暗 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 999;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        /* 當啟動 .show 時才顯示 */
+        .modal-overlay.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: #2d3748;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            text-align: center;
+            max-width: 400px;
+            width: 80%;
+            border: 2px solid #4fd1c5;
+            transform: scale(0.8);
+            transition: transform 0.3s ease;
+        }
+
+        .modal-overlay.show .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-content h2 {
+            color: #4fd1c5;
+            margin-top: 0;
+            font-size: 28px;
+        }
+
+        .modal-content p {
+            color: #e2e8f0;
+            font-size: 16px;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        /* 視窗按鈕樣式 */
+        .modal-btn {
+            padding: 12px 24px;
+            font-size: 16px;
+            font-weight: bold;
+            border: none;
+            border-radius: 6px;
+            margin: 0 10px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-restart {
+            background-color: #4fd1c5;
+            color: #1a1e24;
+        }
+        .btn-restart:hover { background-color: #38b2ac; }
+
+        .btn-close {
+            background-color: #e53e3e;
+            color: white;
+        }
+        .btn-close:hover { background-color: #c53030; }
     </style>
 </head>
 <body>
@@ -112,54 +197,60 @@
     
     <div class="game-board" id="board"></div>
 
+    <div class="modal-overlay" id="winModal">
+        <div class="modal-content">
+            <h2>🎉 恭喜通關！</h2>
+            <p>你對人體器官的功能瞭若指掌，簡集是醫學小天才！</p>
+            <button class="modal-btn btn-restart" onclick="restartGame()">再玩一次</button>
+            <button class="modal-btn btn-close" onclick="closePage()">關閉頁面</button>
+        </div>
+    </div>
+
 <script>
-    // === 4. 醫學知識庫（12 組配對） ===
+    // === 5. 醫學知識庫（升級為 Font Awesome 專業圖示） ===
     const dataSet = [
-        { id: 1, type: 'organ', content: '🧠\n大腦' },
+        { id: 1, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-brain"></i><br><span>大腦</span>' },
         { id: 1, type: 'function', content: '思考、記憶與控管全身指令' },
         
-        { id: 2, type: 'organ', content: '🫁\n肺臟' },
+        { id: 2, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-lungs"></i><br><span>肺臟</span>' },
         { id: 2, type: 'function', content: '進行氣體交換吸入氧氣' },
         
-        { id: 3, type: 'organ', content: '🫀\n心臟' },
+        { id: 3, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-heart-pulse"></i><br><span>心臟</span>' },
         { id: 3, type: 'function', content: '跳動並泵出血液至全身' },
         
-        { id: 4, type: 'organ', content: '🥩\n肝臟' }, // 用肉代替，解毒工廠
+        { id: 4, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-capsules"></i><br><span>肝臟</span>' }, // 醫藥代謝意象
         { id: 4, type: 'function', content: '代謝解毒與分泌膽汁' },
         
-        { id: 5, type: 'organ', content: '🥣\n胃部' },
+        { id: 5, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-bowl-food"></i><br><span>胃部</span>' }, // 消化意象
         { id: 5, type: 'function', content: '分泌胃酸初步消化食物' },
         
-        { id: 6, type: 'organ', content: '🪵\n腎臟' }, // 腰子
+        { id: 6, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-filter"></i><br><span>腎臟</span>' }, // 過濾器意象
         { id: 6, type: 'function', content: '過濾血液並形成尿液' },
         
-        { id: 7, type: 'organ', content: '👁️\n眼睛' },
+        { id: 7, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-eye"></i><br><span>眼睛</span>' },
         { id: 7, type: 'function', content: '接收光線並產生視覺' },
         
-        { id: 8, type: 'organ', content: '👂\n耳朵' },
+        { id: 8, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-ear-listen"></i><br><span>耳朵</span>' },
         { id: 8, type: 'function', content: '接收聲波與維持身體平衡' },
         
-        { id: 9, type: 'organ', content: '🦴\n骨骼' },
+        { id: 9, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-bone"></i><br><span>骨骼</span>' },
         { id: 9, type: 'function', content: '支撐身體並保護內臟' },
         
-        { id: 10, type: 'organ', content: '💪\n肌肉' },
+        { id: 10, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-child"></i><br><span>肌肉</span>' }, // 人體運動意象
         { id: 10, type: 'function', content: '收縮以產生力量與運動' },
         
-        { id: 11, type: 'organ', content: '🩸\n血液' },
+        { id: 11, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-droplet"></i><br><span>血液</span>' },
         { id: 11, type: 'function', content: '運輸氧氣、養分與免疫細胞' },
         
-        { id: 12, type: 'organ', content: '🛡️\n皮膚' },
+        { id: 12, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-shield-halved"></i><br><span>皮膚</span>' }, // 防禦盾牌意象
         { id: 12, type: 'function', content: '保護身體免受外物入侵' }
     ];
 
-    // 複製資料陣列準備洗牌
-    let cardsArray = [...dataSet]; 
-
+    let cardsArray = [];
     let hasFlippedCard = false;
     let lockBoard = false;
     let firstCard, secondCard;
 
-    // 洗牌演算法
     function shuffle(array) {
         for (let i = array.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
@@ -167,22 +258,22 @@
         }
     }
 
-    // 初始化遊戲板
     function createBoard() {
         const board = document.getElementById('board');
+        board.innerHTML = ''; // 清空舊圖板
+        cardsArray = [...dataSet]; // 重新載入資料
         shuffle(cardsArray);
 
         cardsArray.forEach((item) => {
             const card = document.createElement('div');
             card.classList.add('card');
-            card.dataset.matchId = item.id; // 改用專屬的 id 作為配對依據
+            card.dataset.matchId = item.id;
 
-            // 判斷是不是器官卡（有圖案的），是的話字體放大
-            const extraClass = item.type === 'organ' ? 'icon-only' : '';
+            const extraClass = item.isIcon ? 'icon-only' : '';
 
             card.innerHTML = `
                 <div class="card-inner">
-                    <div class="card-front ${extraClass}">${item.content.replace('\n', '<br>')}</div>
+                    <div class="card-front ${extraClass}">${item.content}</div>
                     <div class="card-back">🏥</div>
                 </div>
             `;
@@ -209,7 +300,6 @@
     }
 
     function checkForMatch() {
-        // 改成對比 dataset.matchId 是否相同
         let isMatch = firstCard.dataset.matchId === secondCard.dataset.matchId;
         if (isMatch) {
             disableCards();
@@ -234,7 +324,7 @@
             firstCard.classList.remove('flipped');
             secondCard.classList.remove('flipped');
             resetBoard();
-        }, 1200); // 文字較多，配對失敗時停留 1.2 秒讓玩家閱讀
+        }, 1200); 
     }
 
     function resetBoard() {
@@ -242,15 +332,34 @@
         [firstCard, secondCard] = [null, null];
     }
 
+    // 當贏得遊戲時，跳出中央視窗
     function checkWin() {
         const allMatched = document.querySelectorAll('.card.matched');
         if (allMatched.length === cardsArray.length) {
             setTimeout(() => {
-                alert('🎉 恭喜通關！你對人體器官的功能瞭若指掌，簡直是醫學小天才！');
+                document.getElementById('winModal').classList.add('show');
             }, 500);
         }
     }
 
+    // 按鈕功能一：再玩一次
+    function restartGame() {
+        document.getElementById('winModal').classList.remove('show');
+        resetBoard();
+        createBoard();
+    }
+
+    // 按鈕功能二：關閉此頁面
+    function closePage() {
+        // 嘗試關閉視窗（注意：多數現代瀏覽器因安全性限制，只允許關閉由 JS 開啟的視窗）
+        window.close();
+        // 防呆提示：若瀏覽器不允許直接關閉，則引導玩家跳轉回首頁
+        setTimeout(() => {
+            alert("由於瀏覽器安全限制，請直接手動關閉此分頁，或點擊「再玩一次」繼續挑戰！");
+        }, 100);
+    }
+
+    // 啟動遊戲
     createBoard();
 </script>
 
