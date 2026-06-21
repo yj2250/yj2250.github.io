@@ -39,7 +39,7 @@
             margin-top: 10px;
         }
 
-        /* === 3. 卡牌極致細節與 3D 設定 === */
+        /* === 3. 卡牌細節與 3D 設定 === */
         .card {
             width: 100px;
             height: 120px;
@@ -76,13 +76,13 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* 卡牌背面：高雅暗色調配質感紅十字 */
+        /* 卡牌背面：暗色調配質感紅十字 */
         .card-back {
             background-color: #1e2530;
             border: 1px solid rgba(79, 209, 197, 0.2); 
         }
 
-        /* 卡牌正面：極簡洗鍊的白底 */
+        /* 卡牌正面：極簡白底 */
         .card-front {
             background-color: #f8f9fa;
             color: #1a202c;
@@ -92,7 +92,7 @@
             transform: rotateY(180deg);
         }
 
-        /* 專屬圖示卡的微調樣式 */
+        /* 專屬圖示卡的樣式 */
         .card-front.icon-only svg {
             width: 44px;
             height: 44px;
@@ -138,65 +138,4 @@
             background-color: #1e2530;
             padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
-            text-align: center;
-            max-width: 400px;
-            width: 80%;
-            border: 1px solid #4fd1c5;
-            transform: scale(0.8);
-            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-
-        .modal-overlay.show .modal-content {
-            transform: scale(1);
-        }
-
-        .modal-content h2 {
-            color: #4fd1c5;
-            margin-top: 0;
-            font-size: 28px;
-            letter-spacing: 1px;
-        }
-
-        .modal-content p {
-            color: #cbd5e0;
-            font-size: 15px;
-            margin-bottom: 30px;
-            line-height: 1.6;
-        }
-
-        .modal-btn {
-            padding: 12px 28px;
-            font-size: 15px;
-            font-weight: bold;
-            border: none;
-            border-radius: 8px;
-            margin: 0 10px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .btn-restart {
-            background-color: #4fd1c5;
-            color: #12161a;
-        }
-        .btn-restart:hover { 
-            background-color: #38b2ac;
-            box-shadow: 0 0 12px rgba(79, 209, 197, 0.4);
-        }
-
-        .btn-close {
-            background-color: #e53e3e;
-            color: white;
-        }
-        .btn-close:hover { background-color: #c53030; }
-    </style>
-</head>
-<body>
-
-    <h1>🏥 人體器官功能配對挑戰</h1>
-    <div class="info-panel">
-        <p>探索醫學奧秘：請找出「器官圖示」與它「最主要的功能」完成配對</p>
-    </div>
-    
-    <div class="game-
+            box-shadow: 0 20px 40px rgba(
