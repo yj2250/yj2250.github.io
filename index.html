@@ -4,9 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>人體器官功能記憶挑戰 🏥</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <style>
-        /* === 1. 全局與科技深色背景 === */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #12161a; 
@@ -32,7 +30,6 @@
             text-align: center;
         }
 
-        /* === 2. 遊戲畫布排版 === */
         .game-board {
             display: grid;
             grid-template-columns: repeat(6, 100px); 
@@ -40,7 +37,6 @@
             margin-top: 10px;
         }
 
-        /* === 3. 卡牌精緻 3D 設定 === */
         .card {
             width: 100px;
             height: 120px;
@@ -53,7 +49,7 @@
             width: 100%;
             height: 100%;
             text-align: center;
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             transform-style: preserve-3d;
         }
 
@@ -77,14 +73,11 @@
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* 卡牌背面：高雅暗色調 + 低飽和細緻紅十字 */
         .card-back {
             background-color: #1e2530;
             border: 1px solid rgba(79, 209, 197, 0.2); 
-            color: #e53e3e;
         }
 
-        /* 卡牌正面：極簡白底 */
         .card-front {
             background-color: #f8f9fa;
             color: #1a202c;
@@ -94,28 +87,25 @@
             transform: rotateY(180deg);
         }
 
-        /* 專屬圖示卡的字體與高質感青綠色設定 */
-        .card-front.icon-only i {
-            font-size: 38px;
-            color: #2c7a7b; /* 深青綠，極具醫學科技感 */
-            margin-bottom: 6px;
-            display: inline-block;
+        .card-front.icon-only svg {
+            width: 44px;
+            height: 44px;
+            margin-bottom: 8px;
         }
         
         .card-front.icon-only span {
             font-size: 13px;
             color: #4a5568;
             letter-spacing: 1px;
+            font-weight: bold;
         }
 
-        /* 成功配對後的優雅淡出 */
         .card.matched {
             cursor: default;
             opacity: 0.25; 
-            transition: opacity 0.6s;
+            transition: opacity 0.5s;
         }
 
-        /* === 4. 中央通關彈出視窗 === */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -214,56 +204,62 @@
     </div>
 
 <script>
-    // === 5. 醫學知識庫（完美採用高質感知名開源 Bootstrap Icons 醫療線條圖示） ===
+    // 專屬深青綠色
+    const iconColor = "#2c7a7b";
+    
+    // === 真正符合解剖學與意義的精緻 SVG 圖形 ===
     const dataSet = [
-        // 大腦：精美的大腦迴路幾何圖示
-        { id: 1, type: 'organ', isIcon: true, content: '<i class="bi bi-cpu"></i><br><span>大腦</span>' },
+        // 大腦：真實的腦部腦迴路輪廓
+        { id: 1, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 2c-1.5 0-3 1-3 3v.5c-2 0-3.5 1.5-3.5 3.5v.5C1.5 11 1.5 13 3 14v.5c0 1.5 1 3 2.5 3.5.5 1.5 2 2.5 3.5 2.5h6c1.5 0 3-1 3.5-2.5 1.5-.5 2.5-2 2.5-3.5V14c1.5-1 1.5-3 0-4.5V9c0-2-1.5-3.5-3.5-3.5V5c0-2-1.5-3-3-3h-5z"/><path d="M12 2v20"/><path d="M9 6h3"/><path d="M9 10h3"/><path d="M9 14h3"/><path d="M9 18h3"/></svg><span>大腦</span>` },
         { id: 1, type: 'function', content: '思考、記憶與控管全身指令' },
         
-        // 肺臟：高質感肺泡呼吸圖示
-        { id: 2, type: 'organ', isIcon: true, content: '<i class="bi bi-wind"></i><br><span>肺臟</span>' },
+        // 肺臟：正確的氣管與雙側肺葉
+        { id: 2, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v10"/><path d="M12 8c-2-2-5-2-7 1v5c0 3 2 5 5 5h2V8z"/><path d="M12 8c2-2 5-2 7 1v5c0 3-2 5-5 5h-2V8z"/></svg><span>肺臟</span>` },
         { id: 2, type: 'function', content: '進行氣體交換吸入氧氣' },
         
-        // 心臟：標準洗鍊的醫學心跳幾何
-        { id: 3, type: 'organ', isIcon: true, content: '<i class="bi bi-heart-pulse"></i><br><span>心臟</span>' },
+        // 心臟：標準醫療心形
+        { id: 3, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg><span>心臟</span>` },
         { id: 3, type: 'function', content: '跳動並泵出血液至全身' },
         
-        // 肝臟：精緻的分子新陳代謝幾何
-        { id: 4, type: 'organ', isIcon: true, content: '<i class="bi bi-capsule"></i><br><span>肝臟</span>' }, 
+        // 肝臟：真實肝臟的楔形與右葉特徵
+        { id: 4, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6c-3-2-8-2-12 0-3 1.5-4 4-4 7 0 2.5 2 4.5 4.5 4.5h5c4.5 0 8-3.5 8-8V6z"/></svg><span>肝臟</span>` }, 
         { id: 4, type: 'function', content: '代謝解毒與分泌膽汁' },
         
-        // 胃部：標準的胃部杯狀消化器官流線圖示
-        { id: 5, type: 'organ', isIcon: true, content: '<i class="bi bi-cup-hot"></i><br><span>胃部</span>' }, 
+        // 胃部：標準消化道 J 型胃袋
+        { id: 5, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 4c-3 0-4 3-4 6 0 4 3 5 5 7 2 2 5 3 8 3 1.5 0 2-1 2-2.5S18.5 15 17 15c-2 0-3-1-3-3V6c0-1.5-1.5-2-3-2H9z"/></svg><span>胃部</span>` }, 
         { id: 5, type: 'function', content: '分泌胃酸初步消化食物' },
         
-        // 腎臟：過濾網、血液純化幾何圖示
-        { id: 6, type: 'organ', isIcon: true, content: '<i class="bi bi-funnel"></i><br><span>腎臟</span>' }, 
+        // 腎臟：具備輸尿管的真實腎臟蠶豆形
+        { id: 6, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3c-3 0-5 2-5 5s2 4 1 6-4 4-6 2-3-6 1-9 7-4 9-4z"/><path d="M12 11v6"/></svg><span>腎臟</span>` }, 
         { id: 6, type: 'function', content: '過濾血液並形成尿液' },
         
-        // 眼睛：極具未來科技感的精緻視網膜幾何
-        { id: 7, type: 'organ', isIcon: true, content: '<i class="bi bi-eye"></i><br><span>眼睛</span>' },
+        // 眼睛
+        { id: 7, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8-10-8-10-8z"/><circle cx="12" cy="12" r="3"/></svg><span>眼睛</span>` },
         { id: 7, type: 'function', content: '接收光線並產生視覺' },
         
-        // 耳朵：聲波接收弧線圖示
-        { id: 8, type: 'organ', isIcon: true, content: '<i class="bi bi-ear"></i><br><span>耳朵</span>' },
+        // 耳朵：完整外耳廓形狀
+        { id: 8, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 6a4 4 0 0 0-7 2.5v5A3.5 3.5 0 0 0 10.5 17H12v-2h-1.5a1.5 1.5 0 0 1-1.5-1.5v-5A2 2 0 0 1 13 6h1c1 0 2 .5 2 1.5V11"/></svg><span>耳朵</span>` },
         { id: 8, type: 'function', content: '接收聲波與維持身體平衡' },
         
-        // 骨骼：標準人體解剖學骨骼
-        { id: 9, type: 'organ', isIcon: true, content: '<i class="bi bi-segmented-nav"></i><br><span>骨骼</span>' },
+        // 骨骼：最直覺標準的骨頭圖案
+        { id: 9, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="5" width="6" height="14"/><circle cx="8" cy="5" r="3"/><circle cx="16" cy="5" r="3"/><circle cx="8" cy="19" r="3"/><circle cx="16" cy="19" r="3"/></svg><span>骨骼</span>` },
         { id: 9, type: 'function', content: '支撐身體並保護內臟' },
         
-        // 肌肉：經典運動力學二頭肌線條
-        { id: 10, type: 'organ', isIcon: true, content: '<i class="bi bi-lightning"></i><br><span>肌肉</span>' }, 
+        // 肌肉：以啞鈴完美象徵肌肉與力量
+        { id: 10, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 5v14M18 5v14M4 8h4v8H4zM16 8h4v8h-4zM8 12h8"/></svg><span>肌肉</span>` }, 
         { id: 10, type: 'function', content: '收縮以產生力量與運動' },
         
-        // 血液：精細的水滴/血滴形狀
-        { id: 11, type: 'organ', isIcon: true, content: '<i class="bi bi-drop-half"></i><br><span>血液</span>' },
+        // 血液：終於修復！標準的血滴形狀
+        { id: 11, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21.5c-3.3 0-6-2.7-6-6 0-4 6-11.5 6-11.5s6 7.5 6 11.5c0 3.3-2.7 6-6 6z"/></svg><span>血液</span>` },
         { id: 11, type: 'function', content: '運輸氧氣、養分與免疫細胞' },
         
-        // 皮膚：防禦盾牌防護罩，完美的防護意象
-        { id: 12, type: 'organ', isIcon: true, content: '<i class="bi bi-shield-check"></i><br><span>皮膚</span>' }, 
+        // 皮膚：象徵人體第一道防線的防護盾
+        { id: 12, type: 'organ', isIcon: true, content: `<svg viewBox="0 0 24 24" fill="none" stroke="${iconColor}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg><span>皮膚</span>` }, 
         { id: 12, type: 'function', content: '保護身體免受外物入侵' }
     ];
+
+    // 卡背改為簡潔大方的加號
+    const crossBackIcon = `<svg viewBox="0 0 24 24" fill="none" stroke="#e53e3e" stroke-width="3" style="width:36px; height:36px;"><path d="M12 5v14M5 12h14" stroke-linecap="round"/></svg>`;
 
     let cardsArray = [];
     let hasFlippedCard = false;
@@ -293,9 +289,7 @@
             card.innerHTML = `
                 <div class="card-inner">
                     <div class="card-front ${extraClass}">${item.content}</div>
-                    <div class="card-back">
-                        <i class="bi bi-plus-lg" style="font-size: 32px;"></i>
-                    </div>
+                    <div class="card-back">${crossBackIcon}</div>
                 </div>
             `;
 
@@ -340,43 +334,3 @@
     }
 
     function unflipCards() {
-        lockBoard = true;
-        setTimeout(() => {
-            firstCard.classList.remove('flipped');
-            secondCard.classList.remove('flipped');
-            resetBoard();
-        }, 1200); 
-    }
-
-    function resetBoard() {
-        [hasFlippedCard, lockBoard] = [false, false];
-        [firstCard, secondCard] = [null, null];
-    }
-
-    function checkWin() {
-        const allMatched = document.querySelectorAll('.card.matched');
-        if (allMatched.length === cardsArray.length) {
-            setTimeout(() => {
-                document.getElementById('winModal').classList.add('show');
-            }, 500);
-        }
-    }
-
-    function restartGame() {
-        document.getElementById('winModal').classList.remove('show');
-        resetBoard();
-        createBoard();
-    }
-
-    function closePage() {
-        window.close();
-        setTimeout(() => {
-            alert("由於瀏覽器安全限制，請直接手動關閉此分頁，或點擊「再玩一次」繼續挑戰！");
-        }, 100);
-    }
-
-    createBoard();
-</script>
-
-</body>
-</html>
