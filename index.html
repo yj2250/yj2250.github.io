@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>人體器官功能記憶挑戰 🏥</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0" />
     <style>
-        /* === 1. 全局與護眼深色背景 === */
+        /* === 1. 全局與極致深色背景 === */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #1a1e24; 
+            background-color: #12161a; /* 更深邃、進階的科技黑 */
             color: #f0f2f5;
             display: flex;
             flex-direction: column;
@@ -22,27 +22,28 @@
         h1 {
             color: #4fd1c5; 
             margin-bottom: 5px;
+            letter-spacing: 2px;
         }
 
         .info-panel {
-            margin-bottom: 15px;
-            font-size: 16px;
-            color: #b0b8c4;
+            margin-bottom: 20px;
+            font-size: 15px;
+            color: #a0aec0;
             text-align: center;
         }
 
         /* === 2. 遊戲畫布排版 === */
         .game-board {
             display: grid;
-            grid-template-columns: repeat(6, 95px); 
-            grid-gap: 12px;
+            grid-template-columns: repeat(6, 100px); /* 稍微加寬至 100px 更有份量 */
+            grid-gap: 14px;
             margin-top: 10px;
         }
 
-        /* === 3. 卡牌基礎與 3D 設定 === */
+        /* === 3. 卡牌極致細節與 3D 設定 === */
         .card {
-            width: 95px;
-            height: 110px;
+            width: 100px;
+            height: 120px;
             perspective: 1000px;
             cursor: pointer;
         }
@@ -52,7 +53,7 @@
             width: 100%;
             height: 100%;
             text-align: center;
-            transition: transform 0.5s;
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 加入擬真回彈流暢動畫 */
             transform-style: preserve-3d;
         }
 
@@ -69,49 +70,53 @@
             flex-direction: column; 
             align-items: center;    
             justify-content: center;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            border-radius: 12px; /* 圓角加大，更有現代科技感 */
+            box-shadow: 0 6px 12px rgba(0,0,0,0.4);
             padding: 8px;
             box-sizing: border-box;
+            border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* 卡牌背面：深藍灰色配醫學紅十字 */
+        /* 卡牌背面：高雅暗色調配低飽和醫療紅 */
         .card-back {
-            background-color: #2c3e50;
+            background-color: #1e2530;
             color: #e53e3e; 
-            font-size: 28px;
-            font-weight: bold;
+            font-size: 32px;
+            border: 1px solid rgba(79, 209, 197, 0.2); /* 淡淡的青色邊框 */
         }
 
-        /* 卡牌正面：柔和象牙白 */
+        /* 卡牌正面：極簡洗鍊的白底 */
         .card-front {
             background-color: #f8f9fa;
-            color: #2d3748;
-            font-size: 13px;
-            font-weight: bold;
+            color: #1a202c;
+            font-size: 12px;
+            font-weight: 600;
             line-height: 1.4;
             transform: rotateY(180deg);
         }
 
-        /* 純圖示器官卡的特殊樣式 */
+        /* 專屬 Google 圖示的微調樣式 */
         .card-front.icon-only {
-            color: #2b6cb0; 
+            background-color: #f8f9fa;
         }
         
-        .card-front.icon-only i {
-            font-size: 34px;
-            margin-bottom: 6px; 
+        .card-front.icon-only .material-symbols-outlined {
+            font-size: 42px; /* 圖示放大 */
+            color: #2c7a7b;  /* 深青綠色，非常有質感 */
+            margin-bottom: 8px;
         }
         
         .card-front.icon-only span {
-            font-size: 14px;
+            font-size: 13px;
             color: #4a5568;
+            letter-spacing: 1px;
         }
 
+        /* 成功配對後的淡出 */
         .card.matched {
             cursor: default;
-            opacity: 0.3; 
-            transition: opacity 0.5s;
+            opacity: 0.25; 
+            transition: opacity 0.6s;
         }
 
         /* === 4. 中央通關彈出視窗 (Modal) === */
@@ -121,7 +126,7 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.75); 
+            background-color: rgba(0, 0, 0, 0.85); 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -137,16 +142,16 @@
         }
 
         .modal-content {
-            background-color: #2d3748;
+            background-color: #1e2530;
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.6);
             text-align: center;
             max-width: 400px;
             width: 80%;
-            border: 2px solid #4fd1c5;
+            border: 1px solid #4fd1c5;
             transform: scale(0.8);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .modal-overlay.show .modal-content {
@@ -157,31 +162,35 @@
             color: #4fd1c5;
             margin-top: 0;
             font-size: 28px;
+            letter-spacing: 1px;
         }
 
         .modal-content p {
-            color: #e2e8f0;
-            font-size: 16px;
+            color: #cbd5e0;
+            font-size: 15px;
             margin-bottom: 30px;
             line-height: 1.6;
         }
 
         .modal-btn {
-            padding: 12px 24px;
-            font-size: 16px;
+            padding: 12px 28px;
+            font-size: 15px;
             font-weight: bold;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             margin: 0 10px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
 
         .btn-restart {
             background-color: #4fd1c5;
-            color: #1a1e24;
+            color: #12161a;
         }
-        .btn-restart:hover { background-color: #38b2ac; }
+        .btn-restart:hover { 
+            background-color: #38b2ac;
+            box-shadow: 0 0 12px rgba(79, 209, 197, 0.4);
+        }
 
         .btn-close {
             background-color: #e53e3e;
@@ -194,63 +203,60 @@
 
     <h1>🏥 人體器官功能配對挑戰</h1>
     <div class="info-panel">
-        <p>找出「器官圖案」與它「最主要的功能」來完成配對！</p>
+        <p>探索醫學奧秘：請找出「器官圖示」與它「最主要的功能」完成配對</p>
     </div>
     
     <div class="game-board" id="board"></div>
 
     <div class="modal-overlay" id="winModal">
         <div class="modal-content">
-            <h2>🎉 恭喜通關！</h2>
-            <p>你對人體器官的功能瞭若指掌，簡直是醫學小天才！</p>
+            <h2>🎉 挑戰成功</h2>
+            <p>您對人體器官的功能暸若指掌，具備優秀的醫學常識！</p>
             <button class="modal-btn btn-restart" onclick="restartGame()">再玩一次</button>
             <button class="modal-btn btn-close" onclick="closePage()">關閉頁面</button>
         </div>
     </div>
 
 <script>
-    // === 5. 醫學知識庫 ===
-  const dataSet = [
-        { id: 1, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">🧠</span><br><span>大腦</span>' },
+    // === 5. 醫學知識庫（全面更換為 Google Material Icons 精緻線條圖示） ===
+    const dataSet = [
+        { id: 1, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">brain</span><br><span>大腦</span>' },
         { id: 1, type: 'function', content: '思考、記憶與控管全身指令' },
         
-        { id: 2, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">🫁</span><br><span>肺臟</span>' },
+        { id: 2, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">lungs</span><br><span>肺臟</span>' },
         { id: 2, type: 'function', content: '進行氣體交換吸入氧氣' },
         
-        { id: 3, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">🫀</span><br><span>心臟</span>' },
+        { id: 3, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">cardiology</span><br><span>心臟</span>' },
         { id: 3, type: 'function', content: '跳動並泵出血液至全身' },
         
-        { id: 4, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">💊</span><br><span>肝臟</span>' }, // 膠囊代謝意象
+        { id: 4, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">liver</span><br><span>肝臟</span>' }, // 真正的肝臟圖示！
         { id: 4, type: 'function', content: '代謝解毒與分泌膽汁' },
         
-        // 🛠️ 胃部更換為最像胃袋形狀的 Emoji
-        { id: 5, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">🍠</span><br><span>胃部</span>' }, 
+        { id: 5, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">stomach</span><br><span>胃部</span>' }, // 真正的胃袋圖示！
         { id: 5, type: 'function', content: '分泌胃酸初步消化食物' },
         
-        // 🛠️ 腎臟更換為標準蠶豆形 Emoji
-        { id: 6, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">🫘</span><br><span>腎臟</span>' }, 
+        { id: 6, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">kidneys</span><br><span>腎臟</span>' }, // 真正的腎臟圖示！
         { id: 6, type: 'function', content: '過濾血液並形成尿液' },
         
-        { id: 7, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">👁️</span><br><span>眼睛</span>' },
+        { id: 7, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">eye</span><br><span>眼睛</span>' },
         { id: 7, type: 'function', content: '接收光線並產生視覺' },
         
-        { id: 8, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">👂</span><br><span>耳朵</span>' },
+        { id: 8, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">hearing</span><br><span>耳朵</span>' },
         { id: 8, type: 'function', content: '接收聲波與維持身體平衡' },
         
-        { id: 9, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">🦴</span><br><span>骨骼</span>' },
+        { id: 9, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">bone</span><br><span>骨骼</span>' },
         { id: 9, type: 'function', content: '支撐身體並保護內臟' },
         
-        // 🛠️ 肌肉更換為絕對支援的強壯手臂 Emoji
-        { id: 10, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">💪</span><br><span>肌肉</span>' }, 
+        { id: 10, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">muscle</span><br><span>肌肉</span>' }, // 真正的肌肉手臂圖示！
         { id: 10, type: 'function', content: '收縮以產生力量與運動' },
         
-        { id: 11, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">🩸</span><br><span>血液</span>' },
+        { id: 11, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">bloodtype</span><br><span>血液</span>' },
         { id: 11, type: 'function', content: '運輸氧氣、養分與免疫細胞' },
         
-        { id: 12, type: 'organ', isIcon: true, content: '<span style="font-size: 40px;">🛡️</span><br><span>皮膚</span>' }, 
+        { id: 12, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">shield</span><br><span>皮膚</span>' }, 
         { id: 12, type: 'function', content: '保護身體免受外物入侵' }
     ];
-    
+
     let cardsArray = [];
     let hasFlippedCard = false;
     let lockBoard = false;
@@ -279,7 +285,9 @@
             card.innerHTML = `
                 <div class="card-inner">
                     <div class="card-front ${extraClass}">${item.content}</div>
-                    <div class="card-back">🏥</div>
+                    <div class="card-back">
+                        <span class="material-symbols-outlined" style="font-size: 36px;">local_hospital</span>
+                    </div>
                 </div>
             `;
 
