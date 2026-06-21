@@ -4,12 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>人體器官功能記憶挑戰 🏥</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,300,0,0" />
     <style>
         /* === 1. 全局與極致深色背景 === */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #12161a; /* 更深邃、進階的科技黑 */
+            background-color: #12161a; 
             color: #f0f2f5;
             display: flex;
             flex-direction: column;
@@ -35,7 +34,7 @@
         /* === 2. 遊戲畫布排版 === */
         .game-board {
             display: grid;
-            grid-template-columns: repeat(6, 100px); /* 稍微加寬至 100px 更有份量 */
+            grid-template-columns: repeat(6, 100px); 
             grid-gap: 14px;
             margin-top: 10px;
         }
@@ -53,7 +52,7 @@
             width: 100%;
             height: 100%;
             text-align: center;
-            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 加入擬真回彈流暢動畫 */
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             transform-style: preserve-3d;
         }
 
@@ -70,19 +69,17 @@
             flex-direction: column; 
             align-items: center;    
             justify-content: center;
-            border-radius: 12px; /* 圓角加大，更有現代科技感 */
+            border-radius: 12px; 
             box-shadow: 0 6px 12px rgba(0,0,0,0.4);
             padding: 8px;
             box-sizing: border-box;
             border: 1px solid rgba(255,255,255,0.05);
         }
 
-        /* 卡牌背面：高雅暗色調配低飽和醫療紅 */
+        /* 卡牌背面：高雅暗色調配質感紅十字 */
         .card-back {
             background-color: #1e2530;
-            color: #e53e3e; 
-            font-size: 32px;
-            border: 1px solid rgba(79, 209, 197, 0.2); /* 淡淡的青色邊框 */
+            border: 1px solid rgba(79, 209, 197, 0.2); 
         }
 
         /* 卡牌正面：極簡洗鍊的白底 */
@@ -95,14 +92,10 @@
             transform: rotateY(180deg);
         }
 
-        /* 專屬 Google 圖示的微調樣式 */
-        .card-front.icon-only {
-            background-color: #f8f9fa;
-        }
-        
-        .card-front.icon-only .material-symbols-outlined {
-            font-size: 42px; /* 圖示放大 */
-            color: #2c7a7b;  /* 深青綠色，非常有質感 */
+        /* 專屬圖示卡的微調樣式 */
+        .card-front.icon-only svg {
+            width: 44px;
+            height: 44px;
             margin-bottom: 8px;
         }
         
@@ -206,169 +199,4 @@
         <p>探索醫學奧秘：請找出「器官圖示」與它「最主要的功能」完成配對</p>
     </div>
     
-    <div class="game-board" id="board"></div>
-
-    <div class="modal-overlay" id="winModal">
-        <div class="modal-content">
-            <h2>🎉 挑戰成功</h2>
-            <p>您對人體器官的功能暸若指掌，具備優秀的醫學常識！</p>
-            <button class="modal-btn btn-restart" onclick="restartGame()">再玩一次</button>
-            <button class="modal-btn btn-close" onclick="closePage()">關閉頁面</button>
-        </div>
-    </div>
-
-<script>
-    // === 5. 醫學知識庫（全面更換為 Google Material Icons 精緻線條圖示） ===
-    const dataSet = [
-        { id: 1, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">brain</span><br><span>大腦</span>' },
-        { id: 1, type: 'function', content: '思考、記憶與控管全身指令' },
-        
-        { id: 2, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">lungs</span><br><span>肺臟</span>' },
-        { id: 2, type: 'function', content: '進行氣體交換吸入氧氣' },
-        
-        { id: 3, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">cardiology</span><br><span>心臟</span>' },
-        { id: 3, type: 'function', content: '跳動並泵出血液至全身' },
-        
-        { id: 4, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">liver</span><br><span>肝臟</span>' }, // 真正的肝臟圖示！
-        { id: 4, type: 'function', content: '代謝解毒與分泌膽汁' },
-        
-        { id: 5, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">stomach</span><br><span>胃部</span>' }, // 真正的胃袋圖示！
-        { id: 5, type: 'function', content: '分泌胃酸初步消化食物' },
-        
-        { id: 6, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">kidneys</span><br><span>腎臟</span>' }, // 真正的腎臟圖示！
-        { id: 6, type: 'function', content: '過濾血液並形成尿液' },
-        
-        { id: 7, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">eye</span><br><span>眼睛</span>' },
-        { id: 7, type: 'function', content: '接收光線並產生視覺' },
-        
-        { id: 8, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">hearing</span><br><span>耳朵</span>' },
-        { id: 8, type: 'function', content: '接收聲波與維持身體平衡' },
-        
-        { id: 9, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">bone</span><br><span>骨骼</span>' },
-        { id: 9, type: 'function', content: '支撐身體並保護內臟' },
-        
-        { id: 10, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">muscle</span><br><span>肌肉</span>' }, // 真正的肌肉手臂圖示！
-        { id: 10, type: 'function', content: '收縮以產生力量與運動' },
-        
-        { id: 11, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">bloodtype</span><br><span>血液</span>' },
-        { id: 11, type: 'function', content: '運輸氧氣、養分與免疫細胞' },
-        
-        { id: 12, type: 'organ', isIcon: true, content: '<span class="material-symbols-outlined">shield</span><br><span>皮膚</span>' }, 
-        { id: 12, type: 'function', content: '保護身體免受外物入侵' }
-    ];
-
-    let cardsArray = [];
-    let hasFlippedCard = false;
-    let lockBoard = false;
-    let firstCard, secondCard;
-
-    function shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
-            const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
-        }
-    }
-
-    function createBoard() {
-        const board = document.getElementById('board');
-        board.innerHTML = ''; 
-        cardsArray = [...dataSet]; 
-        shuffle(cardsArray);
-
-        cardsArray.forEach((item) => {
-            const card = document.createElement('div');
-            card.classList.add('card');
-            card.dataset.matchId = item.id;
-
-            const extraClass = item.isIcon ? 'icon-only' : '';
-
-            card.innerHTML = `
-                <div class="card-inner">
-                    <div class="card-front ${extraClass}">${item.content}</div>
-                    <div class="card-back">
-                        <span class="material-symbols-outlined" style="font-size: 36px;">local_hospital</span>
-                    </div>
-                </div>
-            `;
-
-            card.addEventListener('click', flipCard);
-            board.appendChild(card);
-        });
-    }
-
-    function flipCard() {
-        if (lockBoard) return;
-        if (this === firstCard) return;
-
-        this.classList.add('flipped');
-
-        if (!hasFlippedCard) {
-            hasFlippedCard = true;
-            firstCard = this;
-            return;
-        }
-
-        secondCard = this;
-        checkForMatch();
-    }
-
-    function checkForMatch() {
-        let isMatch = firstCard.dataset.matchId === secondCard.dataset.matchId;
-        if (isMatch) {
-            disableCards();
-        } else {
-            unflipCards();
-        }
-    }
-
-    function disableCards() {
-        firstCard.removeEventListener('click', flipCard);
-        secondCard.removeEventListener('click', flipCard);
-        firstCard.classList.add('matched');
-        secondCard.classList.add('matched');
-        
-        resetBoard();
-        checkWin();
-    }
-
-    function unflipCards() {
-        lockBoard = true;
-        setTimeout(() => {
-            firstCard.classList.remove('flipped');
-            secondCard.classList.remove('flipped');
-            resetBoard();
-        }, 1200); 
-    }
-
-    function resetBoard() {
-        [hasFlippedCard, lockBoard] = [false, false];
-        [firstCard, secondCard] = [null, null];
-    }
-
-    function checkWin() {
-        const allMatched = document.querySelectorAll('.card.matched');
-        if (allMatched.length === cardsArray.length) {
-            setTimeout(() => {
-                document.getElementById('winModal').classList.add('show');
-            }, 500);
-        }
-    }
-
-    function restartGame() {
-        document.getElementById('winModal').classList.remove('show');
-        resetBoard();
-        createBoard();
-    }
-
-    function closePage() {
-        window.close();
-        setTimeout(() => {
-            alert("由於瀏覽器安全限制，請直接手動關閉此分頁，或點擊「再玩一次」繼續挑戰！");
-        }, 100);
-    }
-
-    createBoard();
-</script>
-
-</body>
-</html>
+    <div class="game-
