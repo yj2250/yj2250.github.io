@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>人體器官功能記憶挑戰 🏥</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* === 1. 全局與護眼深色背景 === */
         body {
@@ -20,7 +20,7 @@
         }
 
         h1 {
-            color: #4fd1c5; /* 醫療青綠色 */
+            color: #4fd1c5; 
             margin-bottom: 5px;
         }
 
@@ -66,9 +66,9 @@
             height: 100%;
             backface-visibility: hidden;
             display: flex;
-            flex-direction: column; /* 讓內容垂直排列 */
-            align-items: center;    /* 水平置中 */
-            justify-content: center;/* 垂直置中：解決圖片太上面的問題 */
+            flex-direction: column; 
+            align-items: center;    
+            justify-content: center;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0,0,0,0.3);
             padding: 8px;
@@ -93,18 +93,16 @@
             transform: rotateY(180deg);
         }
 
-        /* 純圖示器官卡的特殊樣式（置中與縮放調整） */
+        /* 純圖示器官卡的特殊樣式 */
         .card-front.icon-only {
-            color: #2b6cb0; /* 質感藍色 */
+            color: #2b6cb0; 
         }
         
-        /* 圖示放大 */
         .card-front.icon-only i {
             font-size: 34px;
-            margin-bottom: 6px; /* 與下方標籤文字拉開一點距離 */
+            margin-bottom: 6px; 
         }
         
-        /* 標籤文字 */
         .card-front.icon-only span {
             font-size: 14px;
             color: #4a5568;
@@ -225,7 +223,8 @@
         { id: 4, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-capsules"></i><br><span>肝臟</span>' }, 
         { id: 4, type: 'function', content: '代謝解毒與分泌膽汁' },
         
-        { id: 5, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-bowl-food"></i><br><span>胃部</span>' }, 
+        // 🛠️ 胃部已更換為專業胃袋圖示 (fa-stomach)
+        { id: 5, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-stomach"></i><br><span>胃部</span>' }, 
         { id: 5, type: 'function', content: '分泌胃酸初步消化食物' },
         
         { id: 6, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-filter"></i><br><span>腎臟</span>' }, 
@@ -240,8 +239,8 @@
         { id: 9, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-bone"></i><br><span>骨骼</span>' },
         { id: 9, type: 'function', content: '支撐身體並保護內臟' },
         
-        // 🛠️ 肌肉圖示已更換為強壯的手臂 (fa-arm-flexed)
-        { id: 10, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-arm-flexed"></i><br><span>肌肉</span>' }, 
+        // 🛠️ 肌肉已更換為相容性更高的強力二頭肌手臂圖示 (fa-bicep)
+        { id: 10, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-bicep"></i><br><span>肌肉</span>' }, 
         { id: 10, type: 'function', content: '收縮以產生力量與運動' },
         
         { id: 11, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-droplet"></i><br><span>血液</span>' },
