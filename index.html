@@ -54,10 +54,9 @@
             height: 100%;
             border-radius: 12px; 
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            padding: 12px; 
             box-sizing: border-box;
             
-            /* 🚀 核心置中設定：雙面皆上下左右絕對居中 */
+            /* 🚀 核心置中設定 */
             display: flex;
             align-items: center;    
             justify-content: center;
@@ -68,19 +67,17 @@
             transition: transform 0.4s ease, opacity 0.4s ease;
         }
 
-        /* 🔧 卡片背面：移除圖片，改為簡潔的問號文字，同樣完美置中 */
+        /* 🏥 還原：經典的醫院主題卡背 */
         .card-back {
             background-color: #2d3748;
             border: 1px solid rgba(44, 122, 123, 0.2); 
-            font-size: 28px;
-            font-weight: bold;
-            color: #a0aec0; /* 柔和的灰白色問號 */
+            font-size: 36px; /* 讓醫院插圖放大好看 */
             transform: rotateY(0deg);
             opacity: 1;
             z-index: 2;
         }
 
-        /* 卡片正面 */
+        /* 卡片正面：維持純文字、完美置中 */
         .card-front {
             background-color: #ffffff;
             color: #1a202c;
@@ -88,6 +85,7 @@
             font-weight: 600;
             line-height: 1.4;
             border: 1px solid #e2e8f0;
+            padding: 12px; 
             transform: rotateY(-180deg);
             opacity: 0;
             z-index: 1;
@@ -101,7 +99,7 @@
             letter-spacing: 1px;
         }
 
-        /* 翻牌狀態 */
+        /* 安全翻牌狀態：背面轉走變透明、正面轉來變顯現 */
         .card.flipped .card-back {
             transform: rotateY(180deg);
             opacity: 0;
@@ -263,9 +261,9 @@
 
             const extraClass = item.type === 'organ' ? 'organ-name' : '';
 
-            // 🔧 核心修正：將卡背圖案換成純文字的「？」
+            // 🏥 這裡還原了卡背的醫院大樓符號
             card.innerHTML = `
-                <div class="card-back">？</div>
+                <div class="card-back">🏥</div>
                 <div class="card-front ${extraClass}">${item.content}</div>
             `;
 
@@ -287,59 +285,4 @@
         }
 
         secondCard = this;
-        checkForMatch();
-    }
-
-    function checkForMatch() {
-        let isMatch = firstCard.dataset.matchId === secondCard.dataset.matchId;
-        if (isMatch) {
-            disableCards();
-        } else {
-            unflipCards();
-        }
-    }
-
-    function disableCards() {
-        firstCard.removeEventListener('click', flipCard);
-        secondCard.removeEventListener('click', flipCard);
-        firstCard.classList.add('matched');
-        secondCard.classList.add('matched');
-        
-        resetBoard();
-        checkWin();
-    }
-
-    function unflipCards() {
-        lockBoard = true;
-        setTimeout(() => {
-            firstCard.classList.remove('flipped');
-            secondCard.classList.remove('flipped');
-            resetBoard();
-        }, 600); 
-    }
-
-    function resetBoard() {
-        [hasFlippedCard, lockBoard] = [false, false];
-        [firstCard, secondCard] = [null, null];
-    }
-
-    function checkWin() {
-        const allMatched = document.querySelectorAll('.card.matched');
-        if (allMatched.length === cardsArray.length) {
-            setTimeout(() => {
-                document.getElementById('winModal').classList.add('show');
-            }, 500);
-        }
-    }
-
-    function restartGame() {
-        document.getElementById('winModal').classList.remove('show');
-        resetBoard();
-        createBoard();
-    }
-
-    createBoard();
-</script>
-
-</body>
-</html>
+        checkFor
