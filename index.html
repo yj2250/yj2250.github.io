@@ -45,7 +45,6 @@
             perspective: 1000px; 
         }
 
-        /* 正面與背面共用的基礎置中樣式 */
         .card-front, .card-back {
             position: absolute;
             top: 0;
@@ -56,7 +55,6 @@
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             box-sizing: border-box;
             
-            /* 🚀 核心置中設定 */
             display: flex;
             align-items: center;    
             justify-content: center;
@@ -67,17 +65,20 @@
             transition: transform 0.4s ease, opacity 0.4s ease;
         }
 
-        /* 🏥 還原：經典的醫院主題卡背 */
+        /* 🎨 核心修正：將卡背改成填滿自訂圖片 */
         .card-back {
-            background-color: #2d3748;
-            border: 1px solid rgba(44, 122, 123, 0.2); 
-            font-size: 36px; /* 讓醫院插圖放大好看 */
+            /* 💡 請把下方的 my-card-back.png 改成你實際的圖片路徑或檔名 */
+            background-image: url('my-card-back.png'); 
+            background-size: cover;        /* 讓圖片完美填滿卡片 */
+            background-position: center;   /* 圖片居中對齊 */
+            background-repeat: no-repeat;
+            border: 1px solid #e2e8f0; 
             transform: rotateY(0deg);
             opacity: 1;
             z-index: 2;
         }
 
-        /* 卡片正面：維持純文字、完美置中 */
+        /* 卡片正面 */
         .card-front {
             background-color: #ffffff;
             color: #1a202c;
@@ -99,7 +100,7 @@
             letter-spacing: 1px;
         }
 
-        /* 安全翻牌狀態：背面轉走變透明、正面轉來變顯現 */
+        /* 翻牌狀態 */
         .card.flipped .card-back {
             transform: rotateY(180deg);
             opacity: 0;
@@ -261,9 +262,9 @@
 
             const extraClass = item.type === 'organ' ? 'organ-name' : '';
 
-            // 🏥 這裡還原了卡背的醫院大樓符號
+            // 這裡把 card-back 的內文清空，只靠背景圖片顯示
             card.innerHTML = `
-                <div class="card-back">🏥</div>
+                <div class="card-back"></div>
                 <div class="card-front ${extraClass}">${item.content}</div>
             `;
 
@@ -285,4 +286,59 @@
         }
 
         secondCard = this;
-        checkFor
+        checkForMatch();
+    }
+
+    function checkForMatch() {
+        let isMatch = firstCard.dataset.matchId === secondCard.dataset.matchId;
+        if (isMatch) {
+            disableCards();
+        } else {
+            unflipCards();
+        }
+    }
+
+    function disableCards() {
+        firstCard.removeEventListener('click', flipCard);
+        secondCard.removeEventListener('click', flipCard);
+        firstCard.classList.add('matched');
+        secondCard.classList.add('matched');
+        
+        resetBoard();
+        checkWin();
+    }
+
+    function unflipCards() {
+        lockBoard = true;
+        setTimeout(() => {
+            firstCard.classList.remove('flipped');
+            secondCard.classList.remove('flipped');
+            resetBoard();
+        }, 600); 
+    }
+
+    function resetBoard() {
+        [hasFlippedCard, lockBoard] = [false, false];
+        [firstCard, secondCard] = [null, null];
+    }
+
+    function checkWin() {
+        const allMatched = document.querySelectorAll('.card.matched');
+        if (allMatched.length === cardsArray.length) {
+            setTimeout(() => {
+                document.getElementById('winModal').classList.add('show');
+            }, 500);
+        }
+    }
+
+    function restartGame() {
+        document.getElementById('winModal').classList.remove('show');
+        resetBoard();
+        createBoard();
+    }
+
+    createBoard();
+</script>
+
+</body>
+</html>
