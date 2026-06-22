@@ -7,8 +7,15 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* 溫暖舒適的純米色背景，保證零渲染衝突 */
-            background-color: #f7f4eb; 
+            background-color: #f5f2eb; 
+            
+            /* 🎨 修正版：質感實驗室方格紋，填補空白且絕不卡頓、不破圖 */
+            background-image: 
+                linear-gradient(rgba(44, 122, 123, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(44, 122, 123, 0.04) 1px, transparent 1px),
+                radial-gradient(circle at 50% 50%, #fdfbf7 0%, #f5f2eb 100%);
+            background-size: 24px 24px, 24px 24px, auto;
+            
             color: #2d3748;
             display: flex;
             flex-direction: column;
@@ -22,6 +29,7 @@
             color: #2c7a7b; 
             margin-bottom: 5px;
             letter-spacing: 2px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .info-panel {
@@ -36,74 +44,61 @@
             grid-template-columns: repeat(6, 100px); 
             grid-gap: 14px;
             margin-top: 10px;
+            /* 隔離層級，確保卡片永遠在最上層 */
+            isolation: isolate; 
         }
 
-        /* 🔧 核心修正：最安全的卡片主體 */
         .card {
             width: 100px;
             height: 120px;
-            position: relative;
+            perspective: 1000px;
             cursor: pointer;
-            perspective: 1000px; /* 依舊保留立體翻轉感 */
         }
 
-        /* 正面與背面共用的基礎樣式 */
-        .card-front, .card-back {
-            position: absolute;
-            top: 0;
-            left: 0;
+        .card-inner {
+            position: relative;
             width: 100%;
             height: 100%;
-            border-radius: 12px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            padding: 8px;
-            box-sizing: border-box;
+            text-align: center;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            transform-style: preserve-3d;
+        }
+
+        .card.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
+
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden; /* 相容 Safari */
             display: flex;
             flex-direction: column; 
             align-items: center;    
             justify-content: center;
-            
-            /* 雙面隱藏與相容性漸變 */
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden;
-            transition: transform 0.4s ease, opacity 0.4s ease;
+            border-radius: 12px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 8px;
+            box-sizing: border-box;
         }
 
-        /* 卡片背面（蓋著時的加號外觀） */
         .card-back {
             background-color: #2d3748;
             border: 1px solid rgba(44, 122, 123, 0.2); 
             font-size: 32px;
-            color: #ffffff;
             transform: rotateY(0deg);
-            opacity: 1;
-            z-index: 2;
         }
 
-        /* 卡片正面（翻開時的內容） */
         .card-front {
             background-color: #ffffff;
             color: #1a202c;
             font-size: 13px;
             font-weight: 600;
             line-height: 1.4;
-            border: 1px solid #e2e8f0;
-            transform: rotateY(-180deg);
-            opacity: 0;
-            z-index: 1;
-        }
-
-        /* 🔥 翻牌狀態：背面轉走變透明、正面轉來變顯現 */
-        .card.flipped .card-back {
             transform: rotateY(180deg);
-            opacity: 0;
-            z-index: 1;
-        }
-
-        .card.flipped .card-front {
-            transform: rotateY(0deg);
-            opacity: 1;
-            z-index: 2;
+            border: 1px solid #e2e8f0;
         }
 
         .card-front.icon-only {
