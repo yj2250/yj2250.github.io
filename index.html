@@ -6,20 +6,23 @@
     <title>人體器官功能記憶挑戰 🏥</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-         body {
-                font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-                /* 質感米白色背景 */
-                background-color: #7b7f8a; 
-                /* 深色沉穩字體，確保高對比度 */
-                color: #2d3748;
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                min-height: 100vh;
-                margin: 0;
-                padding: 20px;
-                }
-
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            /* 基礎米色 */
+            background-color: #f5f2eb; 
+            /* 魔法 1：中心微光的細緻漸層 */
+            background-image: radial-gradient(circle at 50% 50%, #fdfbf7 0%, #f5f2eb 100%);
+            color: #2d3748;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+            /* 防止背景裝飾超出螢幕產生捲軸 */
+            overflow-x: hidden; 
+        }
         h1 {
             color:#4f7d7d; /* 醫療青綠色 */
             margin-bottom: 5px;
