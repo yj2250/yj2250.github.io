@@ -7,15 +7,7 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f2eb; 
-            
-            /* 🎨 修正版：質感實驗室方格紋，填補空白且絕不卡頓、不破圖 */
-            background-image: 
-                linear-gradient(rgba(44, 122, 123, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(44, 122, 123, 0.04) 1px, transparent 1px),
-                radial-gradient(circle at 50% 50%, #fdfbf7 0%, #f5f2eb 100%);
-            background-size: 24px 24px, 24px 24px, auto;
-            
+            background-color: #f7f4eb; 
             color: #2d3748;
             display: flex;
             flex-direction: column;
@@ -29,7 +21,6 @@
             color: #2c7a7b; 
             margin-bottom: 5px;
             letter-spacing: 2px;
-            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .info-panel {
@@ -44,73 +35,82 @@
             grid-template-columns: repeat(6, 100px); 
             grid-gap: 14px;
             margin-top: 10px;
-            /* 隔離層級，確保卡片永遠在最上層 */
-            isolation: isolate; 
         }
 
         .card {
             width: 100px;
             height: 120px;
-            perspective: 1000px;
-            cursor: pointer;
-        }
-
-        .card-inner {
             position: relative;
-            width: 100%;
-            height: 100%;
-            text-align: center;
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
-            transform-style: preserve-3d;
+            cursor: pointer;
+            perspective: 1000px; 
         }
 
-        .card.flipped .card-inner {
-            transform: rotateY(180deg);
-        }
-
+        /* 正面與背面共用的基礎置中樣式 */
         .card-front, .card-back {
             position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
             height: 100%;
-            backface-visibility: hidden;
-            -webkit-backface-visibility: hidden; /* 相容 Safari */
-            display: flex;
-            flex-direction: column; 
-            align-items: center;    
-            justify-content: center;
             border-radius: 12px; 
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            padding: 8px;
+            padding: 12px; /* 增加內襯，讓長文字斷行更美觀 */
             box-sizing: border-box;
+            
+            /* 🚀 核心置中設定：上下左右絕對居中 */
+            display: flex;
+            align-items: center;    
+            justify-content: center;
+            text-align: center;
+            
+            backface-visibility: hidden;
+            -webkit-backface-visibility: hidden;
+            transition: transform 0.4s ease, opacity 0.4s ease;
         }
 
+        /* 卡片背面（蓋著時的加號外觀） */
         .card-back {
             background-color: #2d3748;
             border: 1px solid rgba(44, 122, 123, 0.2); 
             font-size: 32px;
+            color: #ffffff;
             transform: rotateY(0deg);
+            opacity: 1;
+            z-index: 2;
         }
 
+        /* 🔧 卡片正面：移除了圖片相關設定，放大並優化純文字排版 */
         .card-front {
             background-color: #ffffff;
             color: #1a202c;
-            font-size: 13px;
+            font-size: 13px; /* 適合功能敘述的字型大小 */
             font-weight: 600;
             line-height: 1.4;
-            transform: rotateY(180deg);
             border: 1px solid #e2e8f0;
+            transform: rotateY(-180deg);
+            opacity: 0;
+            z-index: 1;
+            word-break: break-all; /* 確保文字太長時會乖乖斷行 */
         }
 
-        .card-front.icon-only {
-            font-size: 46px; 
-        }
-
-        .card-front.icon-only span {
-            font-size: 14px;
-            color: #4a5568;
+        /* 讓只有兩個字的「器官名稱」字體稍微放大，更好看 */
+        .card-front.organ-name {
+            font-size: 18px;
+            color: #2c7a7b; /* 器官名稱換上招牌主題色 */
             letter-spacing: 1px;
-            font-weight: bold;
-            margin-top: 8px;
+        }
+
+        /* 翻牌狀態 */
+        .card.flipped .card-back {
+            transform: rotateY(180deg);
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .card.flipped .card-front {
+            transform: rotateY(0deg);
+            opacity: 1;
+            z-index: 2;
         }
 
         .card.matched {
@@ -190,62 +190,51 @@
             background-color: #234e52;
             box-shadow: 0 0 12px rgba(44, 122, 123, 0.3);
         }
-        </style>
+    </style>
 </head>
 <body>
+
     <h1>🏥 人體器官功能配對挑戰</h1>
     <div class="info-panel">
-        <p>找出「器官圖案」與它「最主要的功能」來完成配對！</p>
+        <p>探索醫學奧秘：請找出「器官名稱」與它「最主要的功能」完成配對</p>
     </div>
     
     <div class="game-board" id="board"></div>
 
     <div class="modal-overlay" id="winModal">
         <div class="modal-content">
-           <h2>🎉 挑戰成功</h2>
+            <h2>🎉 挑戰成功</h2>
             <p>您對人體器官的功能暸若指掌，具備優秀的醫學常識！</p>
             <button class="modal-btn btn-restart" onclick="restartGame()">再玩一次</button>
-            <button class="modal-btn btn-close" onclick="closePage()">關閉頁面</button>
         </div>
     </div>
 
 <script>
-    // === 5. 醫學知識庫 ===
+    // 🔧 核心修正：資料庫完全移除 Emoji，並區分類型
     const dataSet = [
-        { id: 1, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-brain"></i><br><span>大腦</span>' },
+        { id: 1, type: 'organ', content: '大腦' },
         { id: 1, type: 'function', content: '思考、記憶與控管全身指令' },
-        
-        { id: 2, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-lungs"></i><br><span>肺臟</span>' },
+        { id: 2, type: 'organ', content: '肺臟' },
         { id: 2, type: 'function', content: '進行氣體交換吸入氧氣' },
-        
-        { id: 3, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-heart-pulse"></i><br><span>心臟</span>' },
+        { id: 3, type: 'organ', content: '心臟' },
         { id: 3, type: 'function', content: '跳動並泵出血液至全身' },
-        
-        { id: 4, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-capsules"></i><br><span>肝臟</span>' }, 
+        { id: 4, type: 'organ', content: '肝臟' }, 
         { id: 4, type: 'function', content: '代謝解毒與分泌膽汁' },
-        
-        { id: 5, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-bowl-food"></i><br><span>胃部</span>' }, 
+        { id: 5, type: 'organ', content: '胃部' }, 
         { id: 5, type: 'function', content: '分泌胃酸初步消化食物' },
-        
-        { id: 6, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-filter"></i><br><span>腎臟</span>' }, 
+        { id: 6, type: 'organ', content: '腎臟' }, 
         { id: 6, type: 'function', content: '過濾血液並形成尿液' },
-        
-        { id: 7, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-eye"></i><br><span>眼睛</span>' },
+        { id: 7, type: 'organ', content: '眼睛' },
         { id: 7, type: 'function', content: '接收光線並產生視覺' },
-        
-        { id: 8, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-ear-listen"></i><br><span>耳朵</span>' },
+        { id: 8, type: 'organ', content: '耳朵' },
         { id: 8, type: 'function', content: '接收聲波與維持身體平衡' },
-        
-        { id: 9, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-bone"></i><br><span>骨骼</span>' },
+        { id: 9, type: 'organ', content: '骨骼' },
         { id: 9, type: 'function', content: '支撐身體並保護內臟' },
-    
-      { id: 10, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-child"></i><br><span>肌肉</span>' }, // 人體運動意象
+        { id: 10, type: 'organ', content: '肌肉' }, 
         { id: 10, type: 'function', content: '收縮以產生力量與運動' },
-        
-        { id: 11, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-droplet"></i><br><span>血液</span>' },
+        { id: 11, type: 'organ', content: '血液' },
         { id: 11, type: 'function', content: '運輸氧氣、養分與免疫細胞' },
-        
-        { id: 12, type: 'organ', isIcon: true, content: '<i class="fa-solid fa-shield-halved"></i><br><span>皮膚</span>' }, 
+        { id: 12, type: 'organ', content: '皮膚' }, 
         { id: 12, type: 'function', content: '保護身體免受外物入侵' }
     ];
 
@@ -272,13 +261,12 @@
             card.classList.add('card');
             card.dataset.matchId = item.id;
 
-            const extraClass = item.isIcon ? 'icon-only' : '';
+            // 如果是器官名稱，加上額外樣式讓字體稍微放大、變色
+            const extraClass = item.type === 'organ' ? 'organ-name' : '';
 
             card.innerHTML = `
-                <div class="card-inner">
-                    <div class="card-front ${extraClass}">${item.content}</div>
-                    <div class="card-back">🏥</div>
-                </div>
+                <div class="card-back">➕</div>
+                <div class="card-front ${extraClass}">${item.content}</div>
             `;
 
             card.addEventListener('click', flipCard);
@@ -327,7 +315,7 @@
             firstCard.classList.remove('flipped');
             secondCard.classList.remove('flipped');
             resetBoard();
-        }, 500); 
+        }, 600); 
     }
 
     function resetBoard() {
@@ -348,13 +336,6 @@
         document.getElementById('winModal').classList.remove('show');
         resetBoard();
         createBoard();
-    }
-
-    function closePage() {
-        window.close();
-        setTimeout(() => {
-            alert("由於瀏覽器安全限制，請直接手動關閉此分頁，或點擊「再玩一次」繼續挑戰！");
-        }, 100);
     }
 
     createBoard();
