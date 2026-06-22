@@ -54,10 +54,10 @@
             height: 100%;
             border-radius: 12px; 
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-            padding: 12px; /* 增加內襯，讓長文字斷行更美觀 */
+            padding: 12px; 
             box-sizing: border-box;
             
-            /* 🚀 核心置中設定：上下左右絕對居中 */
+            /* 🚀 核心置中設定：雙面皆上下左右絕對居中 */
             display: flex;
             align-items: center;    
             justify-content: center;
@@ -68,35 +68,36 @@
             transition: transform 0.4s ease, opacity 0.4s ease;
         }
 
-        /* 卡片背面（蓋著時的加號外觀） */
+        /* 🔧 卡片背面：移除圖片，改為簡潔的問號文字，同樣完美置中 */
         .card-back {
             background-color: #2d3748;
             border: 1px solid rgba(44, 122, 123, 0.2); 
-            font-size: 32px;
-            color: #ffffff;
+            font-size: 28px;
+            font-weight: bold;
+            color: #a0aec0; /* 柔和的灰白色問號 */
             transform: rotateY(0deg);
             opacity: 1;
             z-index: 2;
         }
 
-        /* 🔧 卡片正面：移除了圖片相關設定，放大並優化純文字排版 */
+        /* 卡片正面 */
         .card-front {
             background-color: #ffffff;
             color: #1a202c;
-            font-size: 13px; /* 適合功能敘述的字型大小 */
+            font-size: 13px; 
             font-weight: 600;
             line-height: 1.4;
             border: 1px solid #e2e8f0;
             transform: rotateY(-180deg);
             opacity: 0;
             z-index: 1;
-            word-break: break-all; /* 確保文字太長時會乖乖斷行 */
+            word-break: break-all; 
         }
 
-        /* 讓只有兩個字的「器官名稱」字體稍微放大，更好看 */
+        /* 器官名稱字體稍微放大 */
         .card-front.organ-name {
             font-size: 18px;
-            color: #2c7a7b; /* 器官名稱換上招牌主題色 */
+            color: #2c7a7b; 
             letter-spacing: 1px;
         }
 
@@ -210,7 +211,6 @@
     </div>
 
 <script>
-    // 🔧 核心修正：資料庫完全移除 Emoji，並區分類型
     const dataSet = [
         { id: 1, type: 'organ', content: '大腦' },
         { id: 1, type: 'function', content: '思考、記憶與控管全身指令' },
@@ -261,11 +261,11 @@
             card.classList.add('card');
             card.dataset.matchId = item.id;
 
-            // 如果是器官名稱，加上額外樣式讓字體稍微放大、變色
             const extraClass = item.type === 'organ' ? 'organ-name' : '';
 
+            // 🔧 核心修正：將卡背圖案換成純文字的「？」
             card.innerHTML = `
-                <div class="card-back">➕</div>
+                <div class="card-back">？</div>
                 <div class="card-front ${extraClass}">${item.content}</div>
             `;
 
