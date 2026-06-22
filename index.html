@@ -45,6 +45,7 @@
             perspective: 1000px; 
         }
 
+        /* 正面與背面共用的基礎置中樣式 */
         .card-front, .card-back {
             position: absolute;
             top: 0;
@@ -53,8 +54,10 @@
             height: 100%;
             border-radius: 12px; 
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            padding: 12px; /* 增加內襯，讓長文字斷行更美觀 */
             box-sizing: border-box;
             
+            /* 🚀 核心置中設定：上下左右絕對居中 */
             display: flex;
             align-items: center;    
             justify-content: center;
@@ -65,38 +68,35 @@
             transition: transform 0.4s ease, opacity 0.4s ease;
         }
 
-        /* 🎨 核心修正：將卡背改成填滿自訂圖片 */
+        /* 卡片背面（蓋著時的加號外觀） */
         .card-back {
-            /* 💡 請把下方的 my-card-back.png 改成你實際的圖片路徑或檔名 */
-            background-image: url('my-card-back.png'); 
-            background-size: cover;        /* 讓圖片完美填滿卡片 */
-            background-position: center;   /* 圖片居中對齊 */
-            background-repeat: no-repeat;
-            border: 1px solid #e2e8f0; 
+            background-color: #2d3748;
+            border: 1px solid rgba(44, 122, 123, 0.2); 
+            font-size: 32px;
+            color: #ffffff;
             transform: rotateY(0deg);
             opacity: 1;
             z-index: 2;
         }
 
-        /* 卡片正面 */
+        /* 🔧 卡片正面：移除了圖片相關設定，放大並優化純文字排版 */
         .card-front {
             background-color: #ffffff;
             color: #1a202c;
-            font-size: 13px; 
+            font-size: 13px; /* 適合功能敘述的字型大小 */
             font-weight: 600;
             line-height: 1.4;
             border: 1px solid #e2e8f0;
-            padding: 12px; 
             transform: rotateY(-180deg);
             opacity: 0;
             z-index: 1;
-            word-break: break-all; 
+            word-break: break-all; /* 確保文字太長時會乖乖斷行 */
         }
 
-        /* 器官名稱字體稍微放大 */
+        /* 讓只有兩個字的「器官名稱」字體稍微放大，更好看 */
         .card-front.organ-name {
             font-size: 18px;
-            color: #2c7a7b; 
+            color: #2c7a7b; /* 器官名稱換上招牌主題色 */
             letter-spacing: 1px;
         }
 
@@ -210,6 +210,7 @@
     </div>
 
 <script>
+    // 🔧 核心修正：資料庫完全移除 Emoji，並區分類型
     const dataSet = [
         { id: 1, type: 'organ', content: '大腦' },
         { id: 1, type: 'function', content: '思考、記憶與控管全身指令' },
@@ -260,11 +261,11 @@
             card.classList.add('card');
             card.dataset.matchId = item.id;
 
+            // 如果是器官名稱，加上額外樣式讓字體稍微放大、變色
             const extraClass = item.type === 'organ' ? 'organ-name' : '';
 
-            // 這裡把 card-back 的內文清空，只靠背景圖片顯示
             card.innerHTML = `
-                <div class="card-back"></div>
+                <div class="card-back">➕</div>
                 <div class="card-front ${extraClass}">${item.content}</div>
             `;
 
