@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>人體器官功能記憶挑戰 🏥</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -23,30 +22,60 @@
             /* 防止背景裝飾超出螢幕產生捲軸 */
             overflow-x: hidden; 
         }
+
+        /* 魔法 2：左上與右下融入超淡的模糊細胞光斑，填補空白感 */
+        body::before, body::after {
+            content: "";
+            position: absolute;
+            border-radius: 50%;
+            /* 深度模糊，營造柔和感 */
+            filter: blur(100px); 
+            z-index: -1;
+            /* 調得非常淡（透明度 8%~12%），隱隱約約最漂亮 */
+            opacity: 0.1; 
+        }
+        /* 左上角深翡翠綠光斑 */
+        body::before {
+            width: 350px;
+            height: 350px;
+            background-color: #2c7a7b;
+            top: 5%;
+            left: -10%;
+        }
+        /* 右下角輕盈粉綠光斑 */
+        body::after {
+            width: 450px;
+            height: 450px;
+            background-color: #4fd1c5;
+            bottom: 5%;
+            right: -10%;
+        }
+
         h1 {
-            color:#4f7d7d; /* 醫療青綠色 */
+            color: #2c7a7b; 
             margin-bottom: 5px;
+            letter-spacing: 2px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
         }
 
         .info-panel {
-            margin-bottom: 15px;
-            font-size: 16px;
-            color: #b0b8c4;
+            margin-bottom: 20px;
+            font-size: 15px;
+            color: #4a5568; 
             text-align: center;
         }
 
-        /* === 2. 遊戲畫布排版 === */
         .game-board {
             display: grid;
-            grid-template-columns: repeat(6, 95px); 
-            grid-gap: 12px;
+            grid-template-columns: repeat(6, 100px); 
+            grid-gap: 14px;
             margin-top: 10px;
+            z-index: 1; /* 確保在背景光斑上方 */
         }
 
-        /* === 3. 卡牌基礎與 3D 設定 === */
         .card {
-            width: 95px;
-            height: 110px;
+            width: 100px;
+            height: 120px;
             perspective: 1000px;
             cursor: pointer;
         }
@@ -56,7 +85,7 @@
             width: 100%;
             height: 100%;
             text-align: center;
-            transition: transform 0.5s;
+            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
             transform-style: preserve-3d;
         }
 
@@ -70,48 +99,41 @@
             height: 100%;
             backface-visibility: hidden;
             display: flex;
-            flex-direction: column; /* 讓內容垂直排列 */
-            align-items: center;    /* 水平置中 */
-            justify-content: center;/* 垂直置中：解決圖片太上面的問題 */
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+            flex-direction: column; 
+            align-items: center;    
+            justify-content: center;
+            border-radius: 12px; 
+            box-shadow: 0 6px 15px rgba(0,0,0,0.06);
             padding: 8px;
             box-sizing: border-box;
         }
 
-        /* 卡牌背面：深藍灰色配醫學紅十字 */
         .card-back {
-            background-color:#7b7f8a;
-            color: #e53e3e; 
-            font-size: 28px;
-            font-weight: bold;
+            background-color: #2d3748;
+            border: 1px solid rgba(44, 122, 123, 0.2); 
+            font-size: 32px;
         }
 
-        /* 卡牌正面：柔和象牙白 */
         .card-front {
-            background-color: #f8f9fa;
-            color: #2d3748;
+            background-color: #ffffff;
+            color: #1a202c;
             font-size: 13px;
-            font-weight: bold;
+            font-weight: 600;
             line-height: 1.4;
             transform: rotateY(180deg);
+            border: 1px solid #e2e8f0;
         }
 
-        /* 純圖示器官卡的特殊樣式（置中與縮放調整） */
         .card-front.icon-only {
-            color: #2b6cb0; /* 質感藍色 */
+            font-size: 46px; 
         }
-        
-        /* 圖示放大 */
-        .card-front.icon-only i {
-            font-size: 34px;
-            margin-bottom: 6px; /* 與下方標籤文字拉開一點距離 */
-        }
-        
-        /* 標籤文字 */
+
         .card-front.icon-only span {
             font-size: 14px;
             color: #4a5568;
+            letter-spacing: 1px;
+            font-weight: bold;
+            margin-top: 8px;
         }
 
         .card.matched {
@@ -120,14 +142,13 @@
             transition: opacity 0.5s;
         }
 
-        /* === 4. 中央通關彈出視窗 (Modal) === */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.75); 
+            background-color: rgba(0, 0, 0, 0.4); 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -143,16 +164,16 @@
         }
 
         .modal-content {
-            background-color: #2d3748;
+            background-color: #ffffff;
             padding: 40px;
-            border-radius: 15px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
             text-align: center;
             max-width: 400px;
             width: 80%;
-            border: 2px solid #4fd1c5;
+            border: 2px solid #2c7a7b;
             transform: scale(0.8);
-            transition: transform 0.3s ease;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
 
         .modal-overlay.show .modal-content {
@@ -160,44 +181,38 @@
         }
 
         .modal-content h2 {
-            color: #4fd1c5;
+            color: #2c7a7b;
             margin-top: 0;
             font-size: 28px;
+            letter-spacing: 1px;
         }
 
         .modal-content p {
-            color: #e2e8f0;
-            font-size: 16px;
+            color: #4a5568;
+            font-size: 15px;
             margin-bottom: 30px;
             line-height: 1.6;
         }
 
         .modal-btn {
-            padding: 12px 24px;
-            font-size: 16px;
+            padding: 12px 28px;
+            font-size: 15px;
             font-weight: bold;
             border: none;
-            border-radius: 6px;
+            border-radius: 8px;
             margin: 0 10px;
             cursor: pointer;
-            transition: background 0.2s;
+            transition: all 0.2s;
         }
 
         .btn-restart {
-            background-color: #4fd1c5;
-            color: #1a1e24;
-        }
-        .btn-restart:hover { background-color: #38b2ac; }
-
-        .btn-close {
-            background-color: #e53e3e;
+            background-color: #2c7a7b;
             color: white;
         }
-        .btn-close:hover { background-color: #c53030; }
-    </style>
-</head>
-<body>
-
+        .btn-restart:hover { 
+            background-color: #234e52;
+            box-shadow: 0 0 12px rgba(44, 122, 123, 0.3);
+        }
     <h1>🏥 人體器官功能配對挑戰</h1>
     <div class="info-panel">
         <p>找出「器官圖案」與它「最主要的功能」來完成配對！</p>
