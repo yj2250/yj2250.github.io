@@ -7,10 +7,15 @@
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            /* 基礎米色 */
             background-color: #f5f2eb; 
-            /* 魔法 1：中心微光的細緻漸層 */
-            background-image: radial-gradient(circle at 50% 50%, #fdfbf7 0%, #f5f2eb 100%);
+            
+            /* 🎨 修正版：質感實驗室方格紋，填補空白且絕不卡頓、不破圖 */
+            background-image: 
+                linear-gradient(rgba(44, 122, 123, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(44, 122, 123, 0.04) 1px, transparent 1px),
+                radial-gradient(circle at 50% 50%, #fdfbf7 0%, #f5f2eb 100%);
+            background-size: 24px 24px, 24px 24px, auto;
+            
             color: #2d3748;
             display: flex;
             flex-direction: column;
@@ -18,44 +23,13 @@
             min-height: 100vh;
             margin: 0;
             padding: 20px;
-            position: relative;
-            /* 防止背景裝飾超出螢幕產生捲軸 */
-            overflow-x: hidden; 
-        }
-
-        /* 魔法 2：左上與右下融入超淡的模糊細胞光斑，填補空白感 */
-        body::before, body::after {
-            content: "";
-            position: absolute;
-            border-radius: 50%;
-            /* 深度模糊，營造柔和感 */
-            filter: blur(100px); 
-            z-index: -1;
-            /* 調得非常淡（透明度 8%~12%），隱隱約約最漂亮 */
-            opacity: 0.1; 
-        }
-        /* 左上角深翡翠綠光斑 */
-        body::before {
-            width: 350px;
-            height: 350px;
-            background-color: #2c7a7b;
-            top: 5%;
-            left: -10%;
-        }
-        /* 右下角輕盈粉綠光斑 */
-        body::after {
-            width: 450px;
-            height: 450px;
-            background-color: #4fd1c5;
-            bottom: 5%;
-            right: -10%;
         }
 
         h1 {
             color: #2c7a7b; 
             margin-bottom: 5px;
             letter-spacing: 2px;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.05);
         }
 
         .info-panel {
@@ -70,7 +44,8 @@
             grid-template-columns: repeat(6, 100px); 
             grid-gap: 14px;
             margin-top: 10px;
-            z-index: 1; /* 確保在背景光斑上方 */
+            /* 隔離層級，確保卡片永遠在最上層 */
+            isolation: isolate; 
         }
 
         .card {
@@ -98,12 +73,13 @@
             width: 100%;
             height: 100%;
             backface-visibility: hidden;
+            -webkit-backface-visibility: hidden; /* 相容 Safari */
             display: flex;
             flex-direction: column; 
             align-items: center;    
             justify-content: center;
             border-radius: 12px; 
-            box-shadow: 0 6px 15px rgba(0,0,0,0.06);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
             padding: 8px;
             box-sizing: border-box;
         }
@@ -112,6 +88,7 @@
             background-color: #2d3748;
             border: 1px solid rgba(44, 122, 123, 0.2); 
             font-size: 32px;
+            transform: rotateY(0deg);
         }
 
         .card-front {
